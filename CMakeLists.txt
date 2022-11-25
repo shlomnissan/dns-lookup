@@ -7,6 +7,7 @@ include_directories(include)
 
 set(HEADERS
     include/common/exception.h
+    include/common/buffer.h
     include/dns/dns_utilities.h
     include/dns/dns_question.h
     include/dns/types.h
@@ -17,6 +18,7 @@ set(HEADERS
 
 set(SOURCES
     src/main.cpp
+    src/common/buffer.cpp
     src/dns/dns_question.cpp
     src/network/endpoint.cpp
     src/network/socket.cpp

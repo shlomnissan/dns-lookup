@@ -10,6 +10,8 @@
 #include <limits>
 #include <array>
 
+#include "common/buffer.h"
+
 namespace dns {
     static constexpr uint8_t TYPE_A     = 1;
     static constexpr uint8_t TYPE_MX    = 15;
@@ -19,6 +21,8 @@ namespace dns {
 
     class DNSQuestion {
     public:
+        Common::Buffer buffer;
+
         DNSQuestion(
             uint16_t id,
             std::string_view hostname,
@@ -28,9 +32,9 @@ namespace dns {
     private:
         uint16_t id;
 
-        void buildMessage(std::string_view hostname, uint8_t type);
-        [[nodiscard]] static std::string formatHostName(std::string_view hostname);
-        [[nodiscard]] static uint8_t getTypeIDFromString(std::string_view type);
+        void buildMessage(std::string_view hostname, std::string_view type);
+        [[nodiscard]] static std::string formatHostname(std::string_view hostname);
+        [[nodiscard]] static uint16_t getTypeIDFromString(std::string_view type);
     };
 }
 

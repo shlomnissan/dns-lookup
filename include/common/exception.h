@@ -18,6 +18,12 @@ namespace Common {
             return "The hostname your entered is too long.";
         }
     };
+
+    struct BufferOutOfRange : public std::exception {
+        const char* what() const throw() {
+            return "The message buffer is out of range.";
+        }
+    };
 };
 
 #endif  // DNS_LOOKUP_EXCEPTIONS_H

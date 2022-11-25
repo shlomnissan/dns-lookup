@@ -43,6 +43,11 @@ namespace dns {
         uint16_t nscount;   // number of authority entries
         uint16_t arcount;   // number of resource entries
     };
+
+    struct Question {
+        uint16_t qtype;     // question type
+        uint16_t qclass;    // question class
+    };
 }
 
 #endif  // DNS_LOOKUP_TYPES_H
