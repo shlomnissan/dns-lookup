@@ -9,13 +9,13 @@
 namespace Common {
     struct InvalidQuestionType : public std::exception {
         const char* what() const throw() {
-            return "The DNS record type you entered is invalid. Use a, mx, txt, aaaa, or any instead.";
+            return "The DNS record type you requested is invalid.";
         }
     };
 
     struct InvalidHostnameLength : public std::exception {
         const char* what() const throw() {
-            return "The hostname your entered is too long.";
+            return "The hostname you entered exceeds the limit of 255 characters.";
         }
     };
 

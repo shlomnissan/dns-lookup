@@ -5,27 +5,14 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(include)
 
-set(HEADERS
-    include/common/exception.h
-    include/common/buffer.h
-    include/dns/dns_utilities.h
-    include/dns/dns_question.h
-    include/dns/types.h
-    include/network/net_utilities.h
-    include/network/endpoint.h
-    include/network/socket.h
-)
+file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
+list(FILTER SOURCES EXCLUDE REGEX ".*main\\.cpp$")
 
-set(SOURCES
-    src/main.cpp
-    src/common/buffer.cpp
-    src/dns/dns_question.cpp
-    src/network/endpoint.cpp
-    src/network/socket.cpp
-)
+add_subdirectory(vendor/googletest)
+add_subdirectory(test)
 
 add_executable(
     ${CMAKE_PROJECT_NAME}
-    ${HEADERS}
     ${SOURCES}
+    src/main.cpp
 )
