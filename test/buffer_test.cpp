@@ -12,7 +12,22 @@
 using namespace std;
 using namespace Common;
 
-TEST(DnsLookupBuffer, ThrowsExceptionBufferOutOfRange) {
+TEST(
+    buffer_test,
+    StoresDataCorrectly
+) {
+    string data = "example.com";
+
+    Buffer buffer {};
+    buffer.write(data.c_str(), static_cast<int>(data.size()));
+
+    EXPECT_EQ(strcmp(data.c_str(), buffer.getData()), 0);
+}
+
+TEST(
+    buffer_test,
+    ThrowsExceptionBufferOutOfRange
+) {
     auto size { numeric_limits<uint16_t>::max() };
     string data(size, ' ');
 

@@ -8,7 +8,7 @@
 #include <string>
 #include <netdb.h>
 
-namespace network {
+namespace Network {
     class Endpoint {
     public:
         Endpoint(const std::string& host, const std::string& port);

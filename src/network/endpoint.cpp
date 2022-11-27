@@ -3,7 +3,7 @@
 
 #include "network/endpoint.h"
 
-namespace network {
+namespace Network {
     Endpoint::Endpoint(const std::string &host, const std::string &port) {
         addrinfo hints {};
         hints.ai_socktype = SOCK_DGRAM;

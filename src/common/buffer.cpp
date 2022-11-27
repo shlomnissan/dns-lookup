@@ -5,7 +5,7 @@
 #include "common/exception.h"
 
 namespace Common {
-   void Buffer::write(const char* bytes, uint16_t len) {
+   void Buffer::write(const char* bytes, unsigned long len) {
         if (size + len > max_size) {
             throw BufferOutOfRange();
         }

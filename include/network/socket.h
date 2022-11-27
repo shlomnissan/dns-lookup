@@ -6,7 +6,7 @@
 
 #include "endpoint.h"
 
-namespace network {
+namespace Network {
     class Socket {
     public:
         explicit Socket(const Endpoint& endpoint);

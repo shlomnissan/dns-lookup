@@ -4,12 +4,12 @@
 #include <iostream>
 #include <unistd.h>
 
-#include <dns/dns_question.h>
-#include <dns/dns_utilities.h>
-#include <network/socket.h>
+#include "dns/dns_question.h"
+#include "dns/dns_utilities.h"
+#include "network/socket.h"
 
-using namespace dns;
-using namespace network;
+using namespace Dns;
+using namespace Network;
 
 int main(int argc, char* argv[]) {
     std::cout << "DNS query v1.0\n";

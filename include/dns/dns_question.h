@@ -12,7 +12,7 @@
 
 #include "common/buffer.h"
 
-namespace dns {
+namespace Dns {
     static constexpr uint8_t TYPE_A     = 1;
     static constexpr uint8_t TYPE_MX    = 15;
     static constexpr uint8_t TYPE_TXT   = 16;

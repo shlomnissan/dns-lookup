@@ -11,7 +11,7 @@
 
 #include "network/net_utilities.h"
 
-namespace dns {
+namespace Dns {
     static constexpr char default_dns[] = "8.8.8.8";
 
     std::string get_dns_server() {

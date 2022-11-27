@@ -1,14 +1,14 @@
 // Copyright 2022 Betamark Pty Ltd. All rights reserved.
 // Author: Shlomi Nissan (shlomi@betamark.com)
 
+#include <sstream>
+#include <arpa/inet.h>
+
 #include "common/exception.h"
 #include "dns/dns_question.h"
 #include "dns/types.h"
 
-#include <sstream>
-#include <arpa/inet.h>
-
-namespace dns {
+namespace Dns {
     DNSQuestion::DNSQuestion(
         uint16_t id,
         std::string_view hostname,
@@ -30,7 +30,7 @@ namespace dns {
         Question question {};
         question.qtype = htons(getTypeIDFromString(type)); 
         question.qclass = htons(/* internet = */ 1);
-        buffer.write(reinterpret_cast<char*>(&buffer), sizeof(question));
+        buffer.write(reinterpret_cast<char*>(&question), sizeof(question));
     }
 
     std::string DNSQuestion::formatHostname(std::string_view hostname) {
@@ -42,7 +42,7 @@ namespace dns {
         std::string output {};
         std::string buffer {};
         while (getline(ss, buffer, '.')) {
-            output += std::to_string(size(buffer));
+            output += static_cast<char>(size(buffer));
             output += buffer;
         }
         output += '\0';

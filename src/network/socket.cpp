@@ -7,7 +7,7 @@
 
 #include "network/socket.h"
 
-namespace network {
+namespace Network {
     Socket::Socket(const Endpoint &endpoint) {
         fd_socket = socket(
             endpoint.getFamily(),

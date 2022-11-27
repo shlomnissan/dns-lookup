@@ -13,13 +13,13 @@ namespace Common {
     public:
         static constexpr int max_size = std::numeric_limits<uint16_t>::max();
 
-        void write(const char* bytes, uint16_t len);
-        [[nodiscard]] const unsigned char* getData() const { return buffer.data(); }
+        void write(const char* bytes, unsigned long len);
+        [[nodiscard]] const char* getData() const { return buffer.data(); }
         [[nodiscard]] uint16_t getSize() const { return size; }
 
     private:
         uint16_t size = 0;
-        std::array<uint8_t, max_size> buffer;
+        std::array<char, max_size> buffer;
     }; 
 };
 
