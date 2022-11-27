@@ -21,10 +21,14 @@ int main(int argc, char* argv[]) {
 
     try {
         DNSQuestion question {0xABCD, argv[1], argv[2]};
-        Socket socket {{get_dns_server(), "53"}};
 
-        // TODO: Send question->data through socket
-        // TODO: Receive data from socket
+        Socket socket {{get_dns_server(), "53"}};
+        if (!socket.send(question.buffer)) {
+            std::cerr << "Failed to send DNS question.\n";
+            exit(EXIT_FAILURE);
+        }
+
+        auto buffer = socket.receive();
         // TODO: Parse data
         
     } catch (const std::exception& e) {

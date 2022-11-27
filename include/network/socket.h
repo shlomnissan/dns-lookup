@@ -5,8 +5,11 @@
 #define DNS_LOOKUP_SOCKET_H
 
 #include "endpoint.h"
+#include "common/buffer.h"
 
 namespace Network {
+    using namespace Common;
+
     class Socket {
     public:
         explicit Socket(const Endpoint& endpoint);
@@ -17,8 +20,13 @@ namespace Network {
 
         ~Socket();
 
+        [[nodiscard]] bool send(const Buffer& buffer) const;
+        [[nodiscard]] Buffer receive() const;
+
     private:
         int fd_socket {};
+        int address_len;
+        sockaddr* address;
     };
 };
 

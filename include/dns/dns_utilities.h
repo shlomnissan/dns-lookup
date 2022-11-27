@@ -22,7 +22,7 @@ namespace Dns {
             while (std::getline(file, line)) {
                 if (line.find("nameserver") == 0) {
                     std::string address = line.substr(11);
-                    if (network::is_valid_ip_address(address)) {
+                    if (Network::is_valid_ip_address(address)) {
                         return address;
                     }
                 }
