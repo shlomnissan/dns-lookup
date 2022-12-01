@@ -24,6 +24,12 @@ namespace Common {
             return "The message buffer is out of range.";
         }
     };
+
+    struct MessageIsTooShort : public std::exception {
+        const char* what() const throw() {
+            return "The DNS message is too short to be valid.";
+        }
+    };
 };
 
 #endif  // DNS_LOOKUP_EXCEPTIONS_H

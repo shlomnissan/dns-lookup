@@ -8,22 +8,24 @@
 
 namespace Dns {
     struct Header {
-        /*
-         0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
-         +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-         |                      ID                       |
-         +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-         |QR|   Opcode  |AA|TC|RD|RA|   Z    |   RCODE   |
-         +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-         |                    QDCOUNT                    |
-         +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-         |                    ANCOUNT                    |
-         +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-         |                    NSCOUNT                    |
-         +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-         |                    ARCOUNT                    |
-         +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-        */
+        enum Opcodes {
+            Query,
+            InverseQuery,
+            Status,
+            Unassigned,
+            Notify,
+            Update,
+        };
+
+        enum Rcodes {
+            NoError,
+            FormatError,
+            ServerFailure,
+            NonExistentDomain,
+            NotImplemented,
+            QueryRefused,
+        };
+
         uint16_t id;        // identification number
 
         uint8_t rd :1;      // recursion desired
