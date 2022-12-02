@@ -30,37 +30,42 @@ namespace Dns {
     }
 
     void DNSParser::prettyPrint() const {
-        std::cout << "\nID = 0x" << std::hex << header.id << '\n'; 
-        std::cout << "Opcode = " << opcodeToString() << '\n';
-        std::cout << "Type = " << (header.qr == 0 ? "Query" : "Response" ) << '\n'; 
-        
-        if (header.qr == 1) {
-            std::cout << "Response = " << rcodeToString() << "\n\n";
-        }
+        std::cout << "\n>> HEADER\n";
+        std::cout << ";; ";
+        std::cout << "opcode: " << opcodeToString() << ", "
+                  << "status: " << rcodeToString() << ", "
+                  << "id: " << std::hex << header.id << '\n'; 
+        std::cout << ";; flags:";
+        if (header.qr) std::cout << " qr";
+        if (header.rd) std::cout << " rd";
+        if (header.ra) std::cout << " ra";
+        std::cout << "; ";
+        std::cout << "QUERY: " << header.qdcount << ", ";
+        std::cout << "ANSWER: " << header.ancount << ", ";
+        std::cout << "AUTHORITY: " << header.nscount << ", ";
+        std::cout << "ADDITIONAL: " << header.arcount << "\n";
 
-        std::cout << "(AA) Authoritative Answer = " << (header.aa ? "1" : "0") << '\n';
-        std::cout << "(TC) Turncated = " << (header.tc ? "1" : "0") << '\n';
-        std::cout << "(RD) Recursion Desired = " << (header.rd ? "1" : "0") << '\n';
-        std::cout << "(RA) Recursion Available = " << (header.ra ? "1" : "0") << '\n';
+        std::cout << "\n>> QUSTION SECTION\n";
+        // TODO: print question
     }
 
     std::string DNSParser::opcodeToString() const {
         switch (header.opcode) {
-            case Header::Query: return "Query";
-            case Header::Status: return "Status";
-            case Header::Notify: return "Notify";
-            case Header::Update: return "Update";
+            case Header::Query: return "QUERY";
+            case Header::Status: return "STATUS";
+            case Header::Notify: return "NOTIFY";
+            case Header::Update: return "UPDATE";
             default: return "Not implemented or deprecated";
         }
     }
 
     std::string DNSParser::rcodeToString() const {
         switch (header.rcode) {
-            case Header::NoError: return "Success";
-            case Header::FormatError: return "Format error";
-            case Header::ServerFailure: return "Server failure";
-            case Header::NonExistentDomain: return "Non-existent Domain";
-            case Header::QueryRefused: return "Query refused"; 
+            case Header::NoError: return "NOERROR";
+            case Header::FormatError: return "FORMATERROR";
+            case Header::ServerFailure: return "SERVERFAILURE";
+            case Header::NonExistentDomain: return "NXDOMAIN";
+            case Header::QueryRefused: return "QUERYREFUSED"; 
             default: return "Not implemented or deprecated";
         }
     }
