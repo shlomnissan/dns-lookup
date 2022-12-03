@@ -13,12 +13,6 @@ namespace Common {
         }
     };
 
-    struct InvalidHostnameLength : public std::exception {
-        const char* what() const throw() {
-            return "The hostname you entered exceeds the limit of 255 characters.";
-        }
-    };
-
     struct BufferOutOfRange : public std::exception {
         const char* what() const throw() {
             return "The message buffer is out of range.";

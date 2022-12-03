@@ -9,21 +9,38 @@
 
 using namespace Dns;
 
+// DNS request payload to www.example.com
+const unsigned char dns_request[] = {
+    0xab, 0xcd, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x03, 0x77, 0x77, 0x77, 0x07, 0x65, 0x78, 0x61,
+    0x6d, 0x70, 0x6c, 0x65, 0x03, 0x63, 0x6f, 0x6d, 0x00, 0x00,
+    0x01, 0x00, 0x01
+};
+
 TEST(
     dns_name_test,
-    GeneratesNameWithSimpleData
+    InitNameWithRequestData
 ) {
-    const char data_no_compression[] = {
-        3, 'w', 'w', 'w',
-        7, 'e', 'x', 'a', 'm', 'p', 'l', 'e',
-        3, 'c', 'o', 'm',
-        0,
-        1, 2, 3, 4, 5, 6, 7, 8, 9
-    };
+    auto request = (const char*)dns_request + 12;
 
-    Name name(data_no_compression);
+    Name name {};
+    name.initWithData(request);
 
     EXPECT_EQ(name.getSize(), 17);
     EXPECT_EQ(name.getHostname(), "www.example.com");
-    EXPECT_EQ(strcmp(name.getName().c_str(), data_no_compression), 0);
+    EXPECT_EQ(strcmp(name.getName().c_str(), request), 0);
+}
+
+// TODO: test with compression labels
+
+TEST(
+    dns_name_test,
+    InitNameWithHostname
+) {
+    Name name {};
+    name.initWithHostname("www.example.com");
+
+    EXPECT_EQ(name.getSize(), 17);
+    EXPECT_EQ(name.getHostname(), "www.example.com");
+    EXPECT_EQ(strcmp(name.getName().c_str(), (const char*)dns_request + 12), 0);
 }

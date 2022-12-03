@@ -30,7 +30,7 @@ namespace Dns {
     }
 
     void DNSParser::prettyPrint() const {
-        std::cout << "\n>> HEADER\n";
+        std::cout << "\n>> HEADER <<\n";
         std::cout << ";; ";
         std::cout << "opcode: " << opcodeToString() << ", "
                   << "status: " << rcodeToString() << ", "
@@ -46,6 +46,7 @@ namespace Dns {
         std::cout << "ADDITIONAL: " << header.arcount << "\n";
 
         std::cout << "\n>> QUSTION SECTION\n";
+
         // TODO: print question
     }
 

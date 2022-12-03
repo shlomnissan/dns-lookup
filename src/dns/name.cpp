@@ -1,49 +1,39 @@
 // Copyright 2022 Betamark Pty Ltd. All rights reserved.
 // Author: Shlomi Nissan (shlomi@betamark.com)
 
-#include <iostream>
+#include <sstream>
 
 #include "dns/name.h"
 
 namespace Dns {
-    Name::Name(const char* data) {
-        generateLabelsWithData(data);
-    }
-
-    // TODO: modify this class
-    void Name::generateLabelsWithData(const char* p) {
-        if (!*p) return; 
+    void Name::initWithData(const char* p) {
+        if (!*p) {
+            processLabels();
+            return;
+        }
         const int len = *p++;
-        std::string label {""};
+        std::string label {};
         for (int i = 0; i < len; ++i) label += *p++;
         labels.emplace_back(label);
-        generateLabelsWithData(p);
+        initWithData(p);
     }
 
-    int Name::getSize() const {
-        auto size = 0;
-        for (const auto& label : labels) {
-            size += label.size();
+    void Name::initWithHostname(std::string_view host) {
+        std::stringstream ss { host.data() };
+        std::string label {};
+        while (getline(ss, label, '.')) {
+            labels.emplace_back(label);
         }
-        return size + static_cast<int>(labels.size()) + 1;
+        processLabels();
     }
 
-    std::string Name::getName() const {
-        std::string output {};
+    void Name::processLabels() {
         for (const auto& label : labels) {
-            output += static_cast<char>(size(label));
-            output += label;
+            name += static_cast<char>(label.size()) + label;
+            hostname += "." + label;
         }
-        output += '\0';
-        return output;
-    }
-
-    std::string Name::getHostname() const {
-        std::string output {};
-        for (const auto& label : labels) {
-            output += label;
-            output += ".";
-        }
-        return output.substr(0, output.size() - 1);
+        name += '\0';
+        size = static_cast<int>(name.size());
+        hostname = hostname.substr(1);
     }
 }

@@ -24,29 +24,15 @@ namespace Dns {
         header.qdcount = htons(1);
         buffer.write(reinterpret_cast<char*>(&header), sizeof(header));
 
-        auto formattedHostname = formatHostname(hostname);
-        buffer.write(formattedHostname.c_str(), formattedHostname.size());
-
         Question question {};
-        question.qtype = htons(getTypeIDFromString(type)); 
+        question.name.initWithHostname(hostname);
+        question.qtype = htons(getTypeIDFromString(type));
         question.qclass = htons(/* internet = */ 1);
-        buffer.write(reinterpret_cast<char*>(&question), sizeof(question));
-    }
 
-    std::string DNSQuestion::formatHostname(std::string_view hostname) {
-        if (hostname.size() > 255) {
-            throw Common::InvalidHostnameLength();
-        }
-
-        std::stringstream ss {hostname.data()};
-        std::string output {};
-        std::string buffer {};
-        while (getline(ss, buffer, '.')) {
-            output += static_cast<char>(size(buffer));
-            output += buffer;
-        }
-        output += '\0';
-        return output;
+        auto name_len = question.name.getSize();
+        buffer.write(question.name.getName().c_str(), name_len);
+        buffer.write(reinterpret_cast<char*>(&question.qtype), sizeof(question.qtype));
+        buffer.write(reinterpret_cast<char*>(&question.qclass), sizeof(question.qclass));
     }
 
     uint16_t DNSQuestion::getTypeIDFromString(std::string_view type) {

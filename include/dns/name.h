@@ -10,15 +10,22 @@
 namespace Dns {
     class Name {
     public:
-        explicit Name(const char* data);
+        Name() = default;
 
-        [[nodiscard]] int getSize() const; 
-        [[nodiscard]] std::string getName() const;
-        [[nodiscard]] std::string getHostname() const;
+        void initWithData(const char* p);
+        void initWithHostname(std::string_view hostname);
+
+        [[nodiscard]] int getSize() const { return size; } 
+        [[nodiscard]] std::string getName() const { return name; };
+        [[nodiscard]] std::string getHostname() const { return hostname; };
     private:
+        int size = 0;
+        std::string name {};
+        std::string hostname {};
         std::vector<std::string> labels {};
         
         void generateLabelsWithData(const char* data);
+        void processLabels();
     };
 }
 

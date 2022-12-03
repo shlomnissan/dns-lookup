@@ -6,6 +6,8 @@
 
 #include <cstdint>
 
+#include "dns/name.h"
+
 namespace Dns {
     struct Header {
         enum Opcodes {
@@ -33,7 +35,6 @@ namespace Dns {
         uint8_t aa :1;      // authoritative answer
         uint8_t opcode :4;  // type of operation
         uint8_t qr :1;      // query or response
-
         uint8_t rcode :4;   // response code
         uint8_t cd :1;      // checking disabled
         uint8_t ad :1;      // authenticated data
@@ -47,6 +48,7 @@ namespace Dns {
     };
 
     struct Question {
+        Name name;
         uint16_t qtype;     // question type
         uint16_t qclass;    // question class
     };
