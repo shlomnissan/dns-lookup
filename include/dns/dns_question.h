@@ -13,12 +13,6 @@
 #include "common/buffer.h"
 
 namespace Dns {
-    static constexpr uint8_t TYPE_A     = 1;
-    static constexpr uint8_t TYPE_MX    = 15;
-    static constexpr uint8_t TYPE_TXT   = 16;
-    static constexpr uint8_t TYPE_AAAA  = 28;
-    static constexpr uint8_t TYPE_ANY   = 255;
-
     class DNSQuestion {
     public:
         Common::Buffer buffer;

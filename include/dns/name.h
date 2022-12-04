@@ -7,12 +7,16 @@
 #include <vector>
 #include <string>
 
+#include "common/buffer.h"
+
 namespace Dns {
+    using namespace Common;
+
     class Name {
     public:
         Name() = default;
 
-        void initWithData(const char* p);
+        void initWithData(const Buffer& message, const char* p);
         void initWithHostname(std::string_view hostname);
 
         [[nodiscard]] int getSize() const { return size; } 
@@ -24,8 +28,9 @@ namespace Dns {
         std::string hostname {};
         std::vector<std::string> labels {};
         
-        void generateLabelsWithData(const char* data);
         void processLabels();
+        bool isCompressionLabel(const char* p) const;
+        uint16_t getCompressionLabelAddress(const char* p) const;
     };
 }
 

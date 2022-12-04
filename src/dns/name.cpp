@@ -2,20 +2,25 @@
 // Author: Shlomi Nissan (shlomi@betamark.com)
 
 #include <sstream>
+#include <iostream>
 
 #include "dns/name.h"
 
 namespace Dns {
-    void Name::initWithData(const char* p) {
-        if (!*p) {
+    void Name::initWithData(const Buffer& message, const char* p) {
+        if (*p == 0x00) {
             processLabels();
             return;
         }
-        const int len = *p++;
-        std::string label {};
-        for (int i = 0; i < len; ++i) label += *p++;
-        labels.emplace_back(label);
-        initWithData(p);
+        if (isCompressionLabel(p)) {
+            auto addr = getCompressionLabelAddress(p);
+            return initWithData(message, message.getData() + addr);
+        } else {
+            const int len = *p++;
+            std::string label {p, p + len};
+            labels.emplace_back(label);
+            initWithData(message, p + label.size());
+        } 
     }
 
     void Name::initWithHostname(std::string_view host) {
@@ -35,5 +40,13 @@ namespace Dns {
         name += '\0';
         size = static_cast<int>(name.size());
         hostname = hostname.substr(1);
+    }
+
+    bool Name::isCompressionLabel(const char* p) const {
+        return (*p & 0xC0 /* = 11000000*/) == 0xC0;
+    }
+
+    uint16_t Name::getCompressionLabelAddress(const char* p) const {
+        return ((*p & 0x3F /* = 00111111 */) << 8) | p[1];
     }
 }

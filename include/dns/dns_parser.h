@@ -25,6 +25,7 @@ namespace Dns {
 
     private:
         Header header {};
+        Question question {};
 
         void parseMessage(const char* msg, uint16_t msg_size);
 

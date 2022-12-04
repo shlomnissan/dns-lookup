@@ -5,17 +5,9 @@
 #define DNS_LOOKUP_NET_UTILITIES_H
 
 #include <string_view>
-#include <arpa/inet.h>
-#include <array>
 
 namespace Network {
-    bool is_valid_ip_address(const std::string_view &address) {
-        std::array<unsigned char, sizeof(struct in_addr)> buffer{};
-        if (inet_pton(AF_INET, address.data(), buffer.data())) {
-            return true;
-        }
-        return false;
-    }
+    bool is_valid_ip_address(const std::string_view &address);
 };
 
 #endif  // DNS_LOOKUP_NET_UTILITIES_H

@@ -9,27 +9,11 @@
 #include <string>
 #include <string_view>
 
-#include "network/net_utilities.h"
-
 namespace Dns {
     static constexpr char default_dns[] = "8.8.8.8";
 
-    std::string get_dns_server() {
-        std::ifstream file;
-        file.open("/etc/resolv.conf");
-        if (file.is_open()) {
-            std::string line;
-            while (std::getline(file, line)) {
-                if (line.find("nameserver") == 0) {
-                    std::string address = line.substr(11);
-                    if (Network::is_valid_ip_address(address)) {
-                        return address;
-                    }
-                }
-            }
-        }
-        return default_dns;
-    }
+    std::string get_dns_server();
+    std::string_view type_to_string(uint16_t type);
 }
 
 #endif  // DNS_LOOKUP_DNS_UTILITIES_H

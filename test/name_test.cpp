@@ -5,9 +5,11 @@
 #include <iostream>
 #include <cstring>
 
+#include "common/buffer.h"
 #include "dns/name.h"
 
 using namespace Dns;
+using namespace Common;
 
 // DNS request payload to www.example.com
 const unsigned char dns_request[] = {
@@ -17,21 +19,42 @@ const unsigned char dns_request[] = {
     0x01, 0x00, 0x01
 };
 
+// DNS response payload for www.example.com
+const unsigned char dns_response[] {
+    0xab, 0xcd, 0x81, 0x80, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00,
+    0x00, 0x00, 0x03, 0x77, 0x77, 0x77, 0x07, 0x65, 0x78, 0x61,
+    0x6d, 0x70, 0x6c, 0x65, 0x03, 0x63, 0x6f, 0x6d, 0x00, 0x00,
+    0x01, 0x00, 0x01, 0xc0, 0x0c, 0x00, 0x01, 0x00, 0x01, 0x00,
+    0x00, 0x1a, 0xfb, 0x00, 0x04, 0x5d, 0xb8, 0xd8, 0x22
+};
+
 TEST(
     dns_name_test,
-    InitNameWithRequestData
+    InitNameWithDataNoCompressionLabels
 ) {
-    auto request = (const char*)dns_request + 12;
+    Buffer message {(const char*)dns_request, sizeof(dns_request)};
+    auto p = message.getData() + 12;
 
     Name name {};
-    name.initWithData(request);
+    name.initWithData(message, p);
 
     EXPECT_EQ(name.getSize(), 17);
     EXPECT_EQ(name.getHostname(), "www.example.com");
-    EXPECT_EQ(strcmp(name.getName().c_str(), request), 0);
+    EXPECT_EQ(strcmp(name.getName().c_str(), p), 0);
 }
 
-// TODO: test with compression labels
+TEST(
+    dns_name_test,
+    InitNameWithDataWithCompressionLabels
+) {
+    Buffer message {(const char*)dns_response, sizeof(dns_response)};
+    auto p = message.getData() + 33;
+
+    Name name {};
+    name.initWithData(message, p);
+    EXPECT_EQ(name.getSize(), 17);
+    EXPECT_EQ(name.getHostname(), "www.example.com");
+}
 
 TEST(
     dns_name_test,

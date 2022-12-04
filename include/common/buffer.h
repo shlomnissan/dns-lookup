@@ -5,22 +5,35 @@
 #define DNS_LOOKUP_BUFFER_H
 
 #include <array>
-#include <limits>
 #include <cstdint>
+#include <limits>
+
+#include "common/exception.h"
 
 namespace Common {
-    class Buffer {
-    public:
-        static constexpr int max_size = std::numeric_limits<uint16_t>::max();
+class Buffer {
+  public:
+    static constexpr int max_size = std::numeric_limits<uint16_t>::max();
 
-        void write(const char* bytes, unsigned long len);
-        [[nodiscard]] const char* getData() const { return buffer.data(); }
-        [[nodiscard]] uint16_t getSize() const { return size; }
+    Buffer() = default;
 
-    private:
-        uint16_t size = 0;
-        std::array<char, max_size> buffer;
-    }; 
+    Buffer(const char* bytes, unsigned long len) { write(bytes, len); }
+
+    void write(const char* bytes, unsigned long len) {
+        if (size + len > max_size) {
+            throw BufferOutOfRange();
+        }
+        std::copy(bytes, bytes + len, buffer.data() + size);
+        size += len;
+    }
+
+    [[nodiscard]] const char* getData() const { return buffer.data(); }
+    [[nodiscard]] uint16_t getSize() const { return size; }
+
+  private:
+    uint16_t size = 0;
+    std::array<char, max_size> buffer;
 };
+}; // namespace Common
 
-#endif  // DNS_LOOKUP_BUFFER_H
+#endif // DNS_LOOKUP_BUFFER_H
