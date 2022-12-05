@@ -5,8 +5,8 @@
 #define DNS_LOOKUP_ENDPOINT_H
 
 #include <iostream>
-#include <string>
 #include <netdb.h>
+#include <string>
 
 namespace Network {
     class Endpoint {
@@ -18,16 +18,20 @@ namespace Network {
         Endpoint& operator=(const Endpoint&) = delete;
 
         [[nodiscard]] auto getFamily() const { return address->ai_family; }
-        [[nodiscard]] auto getSocketType() const { return address->ai_socktype; }
+        [[nodiscard]] auto getSocketType() const {
+            return address->ai_socktype;
+        }
         [[nodiscard]] auto getProtocol() const { return address->ai_protocol; }
         [[nodiscard]] auto getAddress() const { return address->ai_addr; }
-        [[nodiscard]] auto getAddressLength() const { return address->ai_addrlen; }
+        [[nodiscard]] auto getAddressLength() const {
+            return address->ai_addrlen;
+        }
 
         ~Endpoint();
 
     private:
         addrinfo* address {};
     };
-};
+}; // namespace Network
 
-#endif  // DNS_LOOKUP_ENDPOINT_H
+#endif // DNS_LOOKUP_ENDPOINT_H

@@ -4,7 +4,7 @@
 #include "network/endpoint.h"
 
 namespace Network {
-    Endpoint::Endpoint(const std::string &host, const std::string &port) {
+    Endpoint::Endpoint(const std::string& host, const std::string& port) {
         addrinfo hints {};
         hints.ai_socktype = SOCK_DGRAM;
         if (getaddrinfo(host.c_str(), port.c_str(), &hints, &address)) {
@@ -13,8 +13,5 @@ namespace Network {
         }
     }
 
-    Endpoint::~Endpoint() {
-        freeaddrinfo(address);
-    }
-};
-
+    Endpoint::~Endpoint() { freeaddrinfo(address); }
+}; // namespace Network

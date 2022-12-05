@@ -11,29 +11,27 @@
 #include "common/exception.h"
 
 namespace Common {
-class Buffer {
-  public:
-    static constexpr int max_size = std::numeric_limits<uint16_t>::max();
+    class Buffer {
+    public:
+        static constexpr int max_size = std::numeric_limits<uint16_t>::max();
 
-    Buffer() = default;
+        Buffer() = default;
 
-    Buffer(const char* bytes, unsigned long len) { write(bytes, len); }
+        Buffer(const char* bytes, unsigned long len) { write(bytes, len); }
 
-    void write(const char* bytes, unsigned long len) {
-        if (size + len > max_size) {
-            throw BufferOutOfRange();
+        void write(const char* bytes, unsigned long len) {
+            if (size + len > max_size) { throw BufferOutOfRange(); }
+            std::copy(bytes, bytes + len, buffer.data() + size);
+            size += len;
         }
-        std::copy(bytes, bytes + len, buffer.data() + size);
-        size += len;
-    }
 
-    [[nodiscard]] const char* getData() const { return buffer.data(); }
-    [[nodiscard]] uint16_t getSize() const { return size; }
+        [[nodiscard]] const char* getData() const { return buffer.data(); }
+        [[nodiscard]] uint16_t getSize() const { return size; }
 
-  private:
-    uint16_t size = 0;
-    std::array<char, max_size> buffer;
-};
+    private:
+        uint16_t size = 0;
+        std::array<char, max_size> buffer;
+    };
 }; // namespace Common
 
 #endif // DNS_LOOKUP_BUFFER_H

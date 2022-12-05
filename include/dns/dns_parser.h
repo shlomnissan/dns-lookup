@@ -6,15 +6,14 @@
 
 #include <string>
 
-#include "dns/types.h"
 #include "common/buffer.h"
+#include "dns/types.h"
 
 namespace Dns {
     using namespace Common;
 
     class DNSParser {
     public:
-
         explicit DNSParser(const Buffer& buffer);
 
         // TODO: get question
@@ -30,8 +29,7 @@ namespace Dns {
         void parseMessage(const char* msg, uint16_t msg_size);
 
         std::string opcodeToString() const;
-        std::string rcodeToString() const;
     };
-}
+} // namespace Dns
 
-#endif  // DNS_LOOKUP_DNS_PARSER_H
+#endif // DNS_LOOKUP_DNS_PARSER_H

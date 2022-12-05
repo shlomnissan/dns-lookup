@@ -4,11 +4,11 @@
 #ifndef DNS_LOOKUP_DNS_QUESTION_H
 #define DNS_LOOKUP_DNS_QUESTION_H
 
-#include <string>
-#include <string_view>
+#include <array>
 #include <cstdint>
 #include <limits>
-#include <array>
+#include <string>
+#include <string_view>
 
 #include "common/buffer.h"
 
@@ -18,18 +18,18 @@ namespace Dns {
         Common::Buffer buffer;
 
         DNSQuestion(
-            uint16_t id,
-            std::string_view hostname,
-            std::string_view type
+            uint16_t id, std::string_view hostname, std::string_view type
         );
 
     private:
         uint16_t id;
 
         void buildMessage(std::string_view hostname, std::string_view type);
-        [[nodiscard]] static std::string formatHostname(std::string_view hostname);
-        [[nodiscard]] static uint16_t getTypeIDFromString(std::string_view type);
+        [[nodiscard]] static std::string
+        formatHostname(std::string_view hostname);
+        [[nodiscard]] static uint16_t getTypeIDFromString(std::string_view type
+        );
     };
-}
+} // namespace Dns
 
-#endif  // DNS_LOOKUP_DNS_QUESTION_H
+#endif // DNS_LOOKUP_DNS_QUESTION_H

@@ -4,8 +4,8 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "dns/dns_question.h"
 #include "dns/dns_parser.h"
+#include "dns/dns_question.h"
 #include "dns/dns_utilities.h"
 #include "network/socket.h"
 
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 
         DNSParser parser {socket.receive()};
         parser.prettyPrint();
-        
+
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << '\n';
         return 1;

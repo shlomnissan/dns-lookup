@@ -24,6 +24,6 @@ namespace Common {
             return "The DNS message is too short to be valid.";
         }
     };
-};
+}; // namespace Common
 
-#endif  // DNS_LOOKUP_EXCEPTIONS_H
+#endif // DNS_LOOKUP_EXCEPTIONS_H

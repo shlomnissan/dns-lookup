@@ -4,8 +4,8 @@
 #ifndef DNS_LOOKUP_SOCKET_H
 #define DNS_LOOKUP_SOCKET_H
 
-#include "endpoint.h"
 #include "common/buffer.h"
+#include "endpoint.h"
 
 namespace Network {
     using namespace Common;
@@ -28,6 +28,6 @@ namespace Network {
         int address_len;
         sockaddr* address;
     };
-};
+}; // namespace Network
 
-#endif  // DNS_LOOKUP_SOCKET_H
+#endif // DNS_LOOKUP_SOCKET_H

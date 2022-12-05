@@ -1,8 +1,8 @@
 // Copyright 2022 Betamark Pty Ltd. All rights reserved.
 // Author: Shlomi Nissan (shlomi@betamark.com)
 
-#include <sstream>
 #include <iostream>
+#include <sstream>
 
 #include "dns/name.h"
 
@@ -20,11 +20,11 @@ namespace Dns {
             std::string label {p, p + len};
             labels.emplace_back(label);
             initWithData(message, p + label.size());
-        } 
+        }
     }
 
     void Name::initWithHostname(std::string_view host) {
-        std::stringstream ss { host.data() };
+        std::stringstream ss {host.data()};
         std::string label {};
         while (getline(ss, label, '.')) {
             labels.emplace_back(label);
@@ -49,4 +49,4 @@ namespace Dns {
     uint16_t Name::getCompressionLabelAddress(const char* p) const {
         return ((*p & 0x3F /* = 00111111 */) << 8) | p[1];
     }
-}
+} // namespace Dns

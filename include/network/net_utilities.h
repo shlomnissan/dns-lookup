@@ -7,7 +7,7 @@
 #include <string_view>
 
 namespace Network {
-    bool is_valid_ip_address(const std::string_view &address);
+    bool is_valid_ip_address(const std::string_view& address);
 };
 
-#endif  // DNS_LOOKUP_NET_UTILITIES_H
+#endif // DNS_LOOKUP_NET_UTILITIES_H

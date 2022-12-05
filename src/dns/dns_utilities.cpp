@@ -25,10 +25,22 @@ namespace Dns {
 
     std::string_view type_to_string(uint16_t type) {
         if (type == TYPE_A) return "A";
+        if (type == TYPE_NS) return "NS";
+        if (type == TYPE_CNAME) return "CNAME";
         if (type == TYPE_MX) return "MX";
         if (type == TYPE_TXT) return "TXT";
         if (type == TYPE_AAAA) return "AAAA";
         if (type == TYPE_ANY) return "ANY";
         return "UNDEFINED";
     }
-}
+
+    std::string_view rcode_to_string(uint8_t rcode) {
+        if (rcode == RCODE_NOERROR) return "NOERROR";
+        if (rcode == RCODE_FORMERR) return "FORMERR";
+        if (rcode == RCODE_SERVFAIL) return "SERVFAIL";
+        if (rcode == RCODE_NXDOMAIN) return "NXDOMAIN";
+        if (rcode == RCODE_NOTIMP) return "NOTIMP";
+        if (rcode == RCODE_REFUSED) return "REFUSED";
+        return "UNDEFINED";
+    }
+} // namespace Dns

@@ -14,6 +14,7 @@ namespace Dns {
 
     std::string get_dns_server();
     std::string_view type_to_string(uint16_t type);
-}
+    std::string_view rcode_to_string(uint8_t rcode);
+} // namespace Dns
 
-#endif  // DNS_LOOKUP_DNS_UTILITIES_H
+#endif // DNS_LOOKUP_DNS_UTILITIES_H

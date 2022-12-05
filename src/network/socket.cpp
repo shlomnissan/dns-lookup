@@ -8,10 +8,9 @@
 #include "network/socket.h"
 
 namespace Network {
-    Socket::Socket(const Endpoint &endpoint) :
-        address_len(endpoint.getAddressLength()),
-        address(endpoint.getAddress())
-    {
+    Socket::Socket(const Endpoint& endpoint)
+        : address_len(endpoint.getAddressLength()),
+          address(endpoint.getAddress()) {
         fd_socket = socket(
             endpoint.getFamily(),
             endpoint.getSocketType(),
@@ -36,22 +35,14 @@ namespace Network {
     }
 
     Buffer Socket::receive() const {
-        char buffer[Buffer::max_size]; 
-        auto bytes_received = recvfrom(
-            fd_socket,
-            buffer,
-            Buffer::max_size,
-            0,
-            nullptr,
-            nullptr
-        );
+        char buffer[Buffer::max_size];
+        auto bytes_received =
+            recvfrom(fd_socket, buffer, Buffer::max_size, 0, nullptr, nullptr);
 
         Buffer output;
         output.write(buffer, bytes_received);
         return output;
     }
 
-    Socket::~Socket() {
-        close(fd_socket);
-    }
-}
+    Socket::~Socket() { close(fd_socket); }
+} // namespace Network
