@@ -4,12 +4,10 @@
 #ifndef DNS_LOOKUP_SOCKET_H
 #define DNS_LOOKUP_SOCKET_H
 
-#include "common/buffer.h"
 #include "endpoint.h"
+#include "network/buffer.h"
 
 namespace Network {
-    using namespace Common;
-
     class Socket {
     public:
         explicit Socket(const Endpoint& endpoint);
@@ -20,8 +18,8 @@ namespace Network {
 
         ~Socket();
 
-        [[nodiscard]] bool send(const Buffer& buffer) const;
-        [[nodiscard]] Buffer receive() const;
+        [[nodiscard]] auto send(const Buffer& buffer) const -> bool;
+        [[nodiscard]] auto receive() const -> Buffer;
 
     private:
         int fd_socket {};

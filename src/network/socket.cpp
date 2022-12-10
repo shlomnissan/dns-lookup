@@ -9,32 +9,26 @@
 
 namespace Network {
     Socket::Socket(const Endpoint& endpoint)
-        : address_len(endpoint.getAddressLength()),
-          address(endpoint.getAddress()) {
+        : address_len(endpoint.getAddressLength()), address(endpoint.getAddress()) {
         fd_socket = socket(
-            endpoint.getFamily(),
-            endpoint.getSocketType(),
-            endpoint.getProtocol()
+            endpoint.getFamily(), endpoint.getSocketType(), endpoint.getProtocol()
         );
+
         if (fd_socket < 0) {
+            // TODO: replace with exception
             std::cerr << "socket() failed. [" << errno << "]\n";
             exit(EXIT_FAILURE);
         }
     }
 
-    bool Socket::send(const Buffer& buffer) const {
+    auto Socket::send(const Buffer& buffer) const -> bool {
         auto bytes_sent = sendto(
-            fd_socket,
-            buffer.getData(),
-            buffer.getSize(),
-            0,
-            address,
-            address_len
+            fd_socket, buffer.getData(), buffer.getSize(), 0, address, address_len
         );
         return bytes_sent == buffer.getSize();
     }
 
-    Buffer Socket::receive() const {
+    auto Socket::receive() const -> Buffer {
         char buffer[Buffer::max_size];
         auto bytes_received =
             recvfrom(fd_socket, buffer, Buffer::max_size, 0, nullptr, nullptr);

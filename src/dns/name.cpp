@@ -1,13 +1,14 @@
 // Copyright 2022 Betamark Pty Ltd. All rights reserved.
 // Author: Shlomi Nissan (shlomi@betamark.com)
 
+#include <cstdint>
 #include <iostream>
 #include <sstream>
 
 #include "dns/name.h"
 
 namespace Dns {
-    void Name::initWithData(const Buffer& message, const char* p) {
+    auto Name::initWithData(const Buffer& message, const char* p) -> void {
         if (*p == 0x00) {
             processLabels();
             return;
@@ -17,22 +18,22 @@ namespace Dns {
             return initWithData(message, message.getData() + addr);
         } else {
             const int len = *p++;
-            std::string label {p, p + len};
+            string label {p, p + len};
             labels.emplace_back(label);
             initWithData(message, p + label.size());
         }
     }
 
-    void Name::initWithHostname(std::string_view host) {
+    auto Name::initWithHostname(string_view host) -> void {
         std::stringstream ss {host.data()};
-        std::string label {};
+        string label {};
         while (getline(ss, label, '.')) {
             labels.emplace_back(label);
         }
         processLabels();
     }
 
-    void Name::processLabels() {
+    auto Name::processLabels() -> void {
         for (const auto& label : labels) {
             name += static_cast<char>(label.size()) + label;
             hostname += "." + label;
@@ -42,11 +43,11 @@ namespace Dns {
         hostname = hostname.substr(1);
     }
 
-    bool Name::isCompressionLabel(const char* p) const {
+    auto Name::isCompressionLabel(const char* p) const -> bool {
         return (*p & 0xC0 /* = 11000000*/) == 0xC0;
     }
 
-    uint16_t Name::getCompressionLabelAddress(const char* p) const {
+    auto Name::getCompressionLabelAddress(const char* p) const -> uint16_t {
         return ((*p & 0x3F /* = 00111111 */) << 8) | p[1];
     }
 } // namespace Dns

@@ -10,25 +10,29 @@
 #include <string>
 #include <string_view>
 
-#include "common/buffer.h"
+#include "network/buffer.h"
 
 namespace Dns {
+    using std::string;
+    using std::string_view;
+
     class DNSQuestion {
     public:
-        Common::Buffer buffer;
+        Network::Buffer buffer;
 
-        DNSQuestion(
-            uint16_t id, std::string_view hostname, std::string_view type
-        );
+        DNSQuestion(uint16_t id, string_view hostname, string_view type);
 
     private:
         uint16_t id;
 
-        void buildMessage(std::string_view hostname, std::string_view type);
-        [[nodiscard]] static std::string
-        formatHostname(std::string_view hostname);
-        [[nodiscard]] static uint16_t getTypeIDFromString(std::string_view type
-        );
+        auto buildMessage(string_view hostname, string_view type) -> void;
+        [[nodiscard]] static auto getTypeIDFromString(string_view type) -> uint16_t;
+    };
+
+    struct InvalidQuestionType : public std::exception {
+        const char* what() const throw() override {
+            return "The DNS record type you requested is invalid.";
+        }
     };
 } // namespace Dns
 

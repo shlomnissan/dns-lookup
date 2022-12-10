@@ -7,31 +7,34 @@
 #include <string>
 #include <vector>
 
-#include "common/buffer.h"
+#include "network/buffer.h"
 
 namespace Dns {
-    using namespace Common;
+    using Network::Buffer;
+    using std::string;
+    using std::string_view;
+    using std::vector;
 
     class Name {
     public:
         Name() = default;
 
-        void initWithData(const Buffer& message, const char* p);
-        void initWithHostname(std::string_view hostname);
+        auto initWithData(const Buffer& message, const char* p) -> void;
+        auto initWithHostname(string_view hostname) -> void;
 
-        [[nodiscard]] int getSize() const { return size; }
-        [[nodiscard]] std::string getName() const { return name; };
-        [[nodiscard]] std::string getHostname() const { return hostname; };
+        [[nodiscard]] auto getSize() const -> int { return size; }
+        [[nodiscard]] auto getName() const -> string { return name; };
+        [[nodiscard]] auto getHostname() const -> string { return hostname; };
 
     private:
         int size = 0;
-        std::string name {};
-        std::string hostname {};
-        std::vector<std::string> labels {};
+        string name {};
+        string hostname {};
+        vector<std::string> labels {};
 
-        void processLabels();
-        bool isCompressionLabel(const char* p) const;
-        uint16_t getCompressionLabelAddress(const char* p) const;
+        auto processLabels() -> void;
+        auto isCompressionLabel(const char* p) const -> bool;
+        auto getCompressionLabelAddress(const char* p) const -> uint16_t;
     };
 } // namespace Dns
 

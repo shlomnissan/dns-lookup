@@ -5,7 +5,6 @@
 #include <cstring>
 #include <iostream>
 
-#include "common/exception.h"
 #include "dns/dns_parser.h"
 #include "dns/dns_utilities.h"
 
@@ -16,7 +15,7 @@ namespace Dns {
         parseMessage(buffer.getData(), buffer.getSize());
     }
 
-    void DNSParser::parseMessage(const char* msg, uint16_t msg_size) {
+    auto DNSParser::parseMessage(const char* msg, uint16_t msg_size) -> void {
         const char* iter = msg;
 
         memcpy(&header, iter, sizeof(header));
@@ -38,9 +37,9 @@ namespace Dns {
         // TODO: parse RRs
     }
 
-    void DNSParser::prettyPrint() const {
+    auto DNSParser::prettyPrint() const -> void {
         std::cout << "\n;;HEADER\n";
-        std::cout << "opcode: " << opcodeToString() << ", "
+        std::cout << "opcode: " << opcode_to_string(header.opcode) << ", "
                   << "status: " << rcode_to_string(header.rcode) << ", "
                   << "id: " << std::hex << header.id << '\n';
         std::cout << "flags:";
@@ -63,16 +62,5 @@ namespace Dns {
         }
 
         if (header.ancount) { std::cout << "\n;;ANSWER SECTION\n"; }
-    }
-
-    // move to utilities
-    std::string DNSParser::opcodeToString() const {
-        switch (header.opcode) {
-            case Header::Query: return "QUERY";
-            case Header::Status: return "STATUS";
-            case Header::Notify: return "NOTIFY";
-            case Header::Update: return "UPDATE";
-            default: return "Not implemented or deprecated";
-        }
     }
 } // namespace Dns

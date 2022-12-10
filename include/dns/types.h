@@ -24,25 +24,14 @@ namespace Dns {
     static constexpr uint8_t RCODE_NOTIMP = 4;
     static constexpr uint8_t RCODE_REFUSED = 3;
 
+    static constexpr uint8_t OPCODE_QUERY = 0;
+    static constexpr uint8_t OPCODE_IQUERY = 1;
+    static constexpr uint8_t OPCODE_STATUS = 2;
+    static constexpr uint8_t OPCODE_UNASSIGNED = 3;
+    static constexpr uint8_t OPCODE_NOTIFY = 4;
+    static constexpr uint8_t OPCODE_UPDATE = 5;
+
     struct Header {
-        enum Opcodes {
-            Query,
-            InverseQuery,
-            Status,
-            Unassigned,
-            Notify,
-            Update,
-        };
-
-        enum Rcodes {
-            NoError,
-            FormatError,
-            ServerFailure,
-            NonExistentDomain,
-            NotImplemented,
-            QueryRefused,
-        };
-
         uint16_t id;
 
         uint8_t rd : 1;

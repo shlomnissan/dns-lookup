@@ -12,12 +12,12 @@
 using namespace Dns;
 using namespace Network;
 
-int main(int argc, char* argv[]) {
+auto main(int argc, char* argv[]) -> int {
     std::cout << "DNS query v1.0\n";
     if (argc < 3) {
         std::cout << "Usage: dns_lookup HOSTNAME TYPE\n";
         std::cout << "Example: dns_lookup example.com aaaa\n";
-        exit(EXIT_SUCCESS);
+        return 1;
     }
 
     try {

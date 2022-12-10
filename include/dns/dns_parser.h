@@ -6,11 +6,11 @@
 
 #include <string>
 
-#include "common/buffer.h"
 #include "dns/types.h"
+#include "network/buffer.h"
 
 namespace Dns {
-    using namespace Common;
+    using Network::Buffer;
 
     class DNSParser {
     public:
@@ -26,9 +26,13 @@ namespace Dns {
         Header header {};
         Question question {};
 
-        void parseMessage(const char* msg, uint16_t msg_size);
+        auto parseMessage(const char* msg, uint16_t msg_size) -> void;
+    };
 
-        std::string opcodeToString() const;
+    struct MessageIsTooShort : public std::exception {
+        const char* what() const throw() override {
+            return "The DNS message is too short to be valid.";
+        }
     };
 } // namespace Dns
 
