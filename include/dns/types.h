@@ -31,7 +31,7 @@ namespace Dns {
     static constexpr uint8_t OPCODE_NOTIFY = 4;
     static constexpr uint8_t OPCODE_UPDATE = 5;
 
-    struct Header {
+    struct t_header {
         uint16_t id;
 
         uint8_t rd : 1;
@@ -49,13 +49,13 @@ namespace Dns {
         uint16_t arcount;
     };
 
-    struct Question {
+    struct t_question {
         Name name;
         uint16_t type;
         uint16_t clazz;
     };
 
-    struct ResourceRecord {
+    struct t_resource_record {
         Name name;
         uint16_t type;
         uint16_t clazz;

@@ -4,8 +4,8 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "dns/dns_parser.h"
-#include "dns/dns_question.h"
+#include "dns/parser.h"
+#include "dns/question.h"
 #include "dns/dns_utilities.h"
 #include "network/socket.h"
 
@@ -21,7 +21,7 @@ auto main(int argc, char* argv[]) -> int {
     }
 
     try {
-        DNSQuestion question {0xABCD, argv[1], argv[2]};
+        Question question {0xABCD, argv[1], argv[2]};
 
         Socket socket {{get_dns_server(), "53"}};
         if (!socket.send(question.buffer)) {
@@ -29,7 +29,7 @@ auto main(int argc, char* argv[]) -> int {
             exit(EXIT_FAILURE);
         }
 
-        DNSParser parser {socket.receive()};
+        Parser parser {socket.receive()};
         parser.prettyPrint();
 
     } catch (const std::exception& e) {

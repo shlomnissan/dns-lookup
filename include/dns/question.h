@@ -16,11 +16,11 @@ namespace Dns {
     using std::string;
     using std::string_view;
 
-    class DNSQuestion {
+    class Question {
     public:
         Network::Buffer buffer;
 
-        DNSQuestion(uint16_t id, string_view hostname, string_view type);
+        Question(uint16_t id, string_view hostname, string_view type);
 
     private:
         uint16_t id;

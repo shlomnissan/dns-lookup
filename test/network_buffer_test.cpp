@@ -11,7 +11,7 @@
 using namespace std;
 using namespace Network;
 
-TEST(buffer_test, StoresDataCorrectly) {
+TEST(network_buffer_test, StoresDataCorrectly) {
     string data = "example.com";
 
     Buffer buffer {};
@@ -20,7 +20,7 @@ TEST(buffer_test, StoresDataCorrectly) {
     EXPECT_EQ(strcmp(data.c_str(), buffer.getData()), 0);
 }
 
-TEST(buffer_test, ThrowsExceptionBufferOutOfRange) {
+TEST(network_buffer_test, ThrowsExceptionBufferOutOfRange) {
     auto size {numeric_limits<uint16_t>::max()};
     string data(size, ' ');
 

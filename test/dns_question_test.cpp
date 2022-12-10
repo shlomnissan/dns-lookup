@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "dns/dns_question.h"
+#include "dns/question.h"
 
 using namespace Dns;
 
@@ -15,7 +15,7 @@ const unsigned char dns_request[] = {
     0x6c, 0x65, 0x03, 0x63, 0x6f, 0x6d, 0x00, 0x00, 0x01, 0x00, 0x01};
 
 TEST(dns_question_test, GeneratesMessageCorrectly) {
-    DNSQuestion question {0xABCD, "www.example.com", "a"};
+    Question question {0xABCD, "www.example.com", "a"};
     auto data = question.buffer.getData();
 
     for (int i = 0; i < sizeof(dns_request); ++i) {
@@ -28,7 +28,7 @@ TEST(dns_question_test, ThrowsExceptionInvalidQuestionType) {
     std::string invalid_type = "abc";
 
     EXPECT_THROW(
-        { DNSQuestion question(0xABCD, "example.com", invalid_type); },
+        { Question question(0xABCD, "example.com", invalid_type); },
         InvalidQuestionType
     );
 }

@@ -12,9 +12,9 @@
 namespace Dns {
     using Network::Buffer;
 
-    class DNSParser {
+    class Parser {
     public:
-        explicit DNSParser(const Buffer& buffer);
+        explicit Parser(const Buffer& buffer);
 
         // TODO: get question
 
@@ -23,8 +23,8 @@ namespace Dns {
         void prettyPrint() const;
 
     private:
-        Header header {};
-        Question question {};
+        t_header header {};
+        t_question question {};
 
         auto parseMessage(const char* msg, uint16_t msg_size) -> void;
     };

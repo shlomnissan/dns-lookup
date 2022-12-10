@@ -5,23 +5,23 @@
 #include <cstdint>
 #include <sstream>
 
-#include "dns/dns_question.h"
+#include "dns/question.h"
 #include "dns/types.h"
 
 namespace Dns {
-    DNSQuestion::DNSQuestion(uint16_t id, string_view hostname, string_view type)
+    Question::Question(uint16_t id, string_view hostname, string_view type)
         : id(id) {
         buildMessage(hostname, type);
     }
 
-    auto DNSQuestion::buildMessage(string_view hostname, string_view type) -> void {
-        Header header {};
+    auto Question::buildMessage(string_view hostname, string_view type) -> void {
+        t_header header {};
         header.id = htons(id);
         header.rd = 1;
         header.qdcount = htons(1);
         buffer.write(reinterpret_cast<char*>(&header), sizeof(header));
 
-        Question question {};
+        t_question question {};
         question.name.initWithHostname(hostname);
         question.type = htons(getTypeIDFromString(type));
         question.clazz = htons(/* internet = */ 1);
@@ -34,7 +34,7 @@ namespace Dns {
         );
     }
 
-    auto DNSQuestion::getTypeIDFromString(string_view type) -> uint16_t {
+    auto Question::getTypeIDFromString(string_view type) -> uint16_t {
         if (type == "a") return TYPE_A;
         if (type == "ns") return TYPE_NS;
         if (type == "cname") return TYPE_CNAME;

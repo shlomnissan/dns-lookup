@@ -5,17 +5,17 @@
 #include <cstring>
 #include <iostream>
 
-#include "dns/dns_parser.h"
+#include "dns/parser.h"
 #include "dns/dns_utilities.h"
 
 namespace Dns {
-    DNSParser::DNSParser(const Buffer& buffer) {
-        if (buffer.getSize() < sizeof(Header)) { throw MessageIsTooShort(); }
+    Parser::Parser(const Buffer& buffer) {
+        if (buffer.getSize() < sizeof(t_header)) { throw MessageIsTooShort(); }
 
         parseMessage(buffer.getData(), buffer.getSize());
     }
 
-    auto DNSParser::parseMessage(const char* msg, uint16_t msg_size) -> void {
+    auto Parser::parseMessage(const char* msg, uint16_t msg_size) -> void {
         const char* iter = msg;
 
         memcpy(&header, iter, sizeof(header));
@@ -37,7 +37,7 @@ namespace Dns {
         // TODO: parse RRs
     }
 
-    auto DNSParser::prettyPrint() const -> void {
+    auto Parser::prettyPrint() const -> void {
         std::cout << "\n;;HEADER\n";
         std::cout << "opcode: " << opcode_to_string(header.opcode) << ", "
                   << "status: " << rcode_to_string(header.rcode) << ", "

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#include "dns/dns_parser.h"
+#include "dns/parser.h"
 #include "dns/types.h"
 #include "network/buffer.h"
 
@@ -21,13 +21,13 @@ const unsigned char dns_response[] {
 
 TEST(dns_parser_tests, ParsesMessageCorrectly) {
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
-    DNSParser parser {buffer};
+    Parser parser {buffer};
 
     // TODO: add assertions
 }
 
 TEST(dns_parser_tests, ThrowsMessageIsTooShort) {
-    Header header {};
+    t_header header {};
     header.id = htons(0xABCD);
 
     Buffer buffer {};
@@ -36,5 +36,5 @@ TEST(dns_parser_tests, ThrowsMessageIsTooShort) {
         sizeof(header) - 1 // 1 byte smaller than the header
     );
 
-    EXPECT_THROW({ DNSParser parser {buffer}; }, MessageIsTooShort);
+    EXPECT_THROW({ Parser parser {buffer}; }, MessageIsTooShort);
 }
