@@ -14,11 +14,7 @@ namespace Network {
             endpoint.getFamily(), endpoint.getSocketType(), endpoint.getProtocol()
         );
 
-        if (fd_socket < 0) {
-            // TODO: replace with exception
-            std::cerr << "socket() failed. [" << errno << "]\n";
-            exit(EXIT_FAILURE);
-        }
+        if (fd_socket < 0) { throw InvalidSocket(); }
     }
 
     auto Socket::send(const Buffer& buffer) const -> bool {

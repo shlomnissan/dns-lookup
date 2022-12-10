@@ -13,7 +13,7 @@ using namespace Dns;
 using namespace Network;
 
 auto main(int argc, char* argv[]) -> int {
-    std::cout << "DNS query v1.0\n";
+    std::cout << "DNS lookup v1.0\n";
     if (argc < 3) {
         std::cout << "Usage: dns_lookup HOSTNAME TYPE\n";
         std::cout << "Example: dns_lookup example.com aaaa\n";

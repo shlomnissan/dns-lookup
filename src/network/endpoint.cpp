@@ -8,8 +8,7 @@ namespace Network {
         addrinfo hints {};
         hints.ai_socktype = SOCK_DGRAM;
         if (getaddrinfo(host.c_str(), port.c_str(), &hints, &address)) {
-            std::cerr << "getaddrinfo() failed. [" << errno << "]\n";
-            exit(EXIT_FAILURE);
+            throw InvalidAddress();
         }
     }
 

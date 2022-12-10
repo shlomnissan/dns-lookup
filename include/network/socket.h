@@ -26,6 +26,12 @@ namespace Network {
         int address_len;
         sockaddr* address;
     };
+
+    struct InvalidSocket : public std::exception {
+        const char* what() const throw() override {
+            return "Failed to open socket using socket().";
+        }
+    };
 }; // namespace Network
 
 #endif // DNS_LOOKUP_SOCKET_H

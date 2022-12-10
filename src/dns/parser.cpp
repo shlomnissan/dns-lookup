@@ -5,10 +5,12 @@
 #include <cstring>
 #include <iostream>
 
-#include "dns/parser.h"
 #include "dns/dns_utilities.h"
+#include "dns/parser.h"
 
 namespace Dns {
+    using std::cout;
+
     Parser::Parser(const Buffer& buffer) {
         if (buffer.getSize() < sizeof(t_header)) { throw MessageIsTooShort(); }
 
@@ -38,29 +40,29 @@ namespace Dns {
     }
 
     auto Parser::prettyPrint() const -> void {
-        std::cout << "\n;;HEADER\n";
-        std::cout << "opcode: " << opcode_to_string(header.opcode) << ", "
-                  << "status: " << rcode_to_string(header.rcode) << ", "
-                  << "id: " << std::hex << header.id << '\n';
-        std::cout << "flags:";
-        if (header.qr) std::cout << " qr";
-        if (header.rd) std::cout << " rd";
-        if (header.ra) std::cout << " ra";
-        std::cout << "; ";
-        std::cout << "QUERY: " << header.qdcount << ", ";
-        std::cout << "ANSWER: " << header.ancount << ", ";
-        std::cout << "AUTHORITY: " << header.nscount << ", ";
-        std::cout << "ADDITIONAL: " << header.arcount << "\n";
+        cout << "\n;;HEADER\n";
+        cout << "opcode: " << opcode_to_string(header.opcode) << ", "
+             << "status: " << rcode_to_string(header.rcode) << ", "
+             << "id: " << std::hex << header.id << '\n';
+        cout << "flags:";
+        if (header.qr) cout << " qr";
+        if (header.rd) cout << " rd";
+        if (header.ra) cout << " ra";
+        cout << "; ";
+        cout << "QUERY: " << header.qdcount << ", ";
+        cout << "ANSWER: " << header.ancount << ", ";
+        cout << "AUTHORITY: " << header.nscount << ", ";
+        cout << "ADDITIONAL: " << header.arcount << "\n";
 
         if (header.qdcount) {
-            std::cout << "\n;;QUSTION SECTION\n";
-            std::cout << question.name.getHostname() << ".";
-            std::cout << "\t\t"
-                      << "IN";
-            std::cout << "\t\t" << type_to_string(question.type);
-            std::cout << "\n";
+            cout << "\n;;QUSTION SECTION\n";
+            cout << question.name.getHostname() << ".";
+            cout << "\t\t"
+                 << "IN";
+            cout << "\t\t" << type_to_string(question.type);
+            cout << "\n";
         }
 
-        if (header.ancount) { std::cout << "\n;;ANSWER SECTION\n"; }
+        if (header.ancount) { cout << "\n;;ANSWER SECTION\n"; }
     }
 } // namespace Dns

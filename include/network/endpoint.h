@@ -28,6 +28,12 @@ namespace Network {
     private:
         addrinfo* address {};
     };
+
+    struct InvalidAddress : public std::exception {
+        const char* what() const throw() override {
+            return "Failed to generate an address using getaddrinfo().";
+        }
+    };
 }; // namespace Network
 
 #endif // DNS_LOOKUP_ENDPOINT_H
