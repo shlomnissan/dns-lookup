@@ -9,65 +9,53 @@
 #include "dns/dns_utilities.h"
 #include "dns/parser.h"
 
-// TODO: move to buffer
-template <typename T> auto read_and_increment(const char** data) -> T {
-    if (std::is_same_v<T, uint32_t>) {
-        uint32_t v32 =
-            **data << 24 | *(*data + 1) << 16 | *(*data + 2) << 8 | *(*data + 3);
-        *data += 4;
-        return v32;
-    }
-    if (std::is_same_v<T, uint16_t>) {
-        uint16_t v16 = **data << 8 | *(*data + 1);
-        *data += 2;
-        return v16;
-    }
-}
-
 namespace Dns {
     using std::cout;
 
-    Parser::Parser(const Buffer& buffer) {
+    Parser::Parser(Buffer buffer) {
         if (buffer.getSize() < sizeof(t_header)) { throw MessageIsTooShort(); }
 
-        parseMessage(buffer.getData(), buffer.getSize());
+        parseMessage(buffer);
     }
 
-    auto Parser::parseMessage(const char* msg, uint16_t msg_size) -> void {
-        const char* iter = msg;
+    auto Parser::parseMessage(Buffer& buffer) -> void {
+        // TODO: throw an exception if there's no header
 
-        memcpy(&header, iter, sizeof(header));
+        memcpy(&header, buffer.getData(), sizeof(header));
         header.id = ntohs(header.id);
         header.qdcount = ntohs(header.qdcount);
         header.ancount = ntohs(header.ancount);
         header.nscount = ntohs(header.nscount);
         header.arcount = ntohs(header.arcount);
-        iter += sizeof(header);
+
+        buffer.seek(sizeof(header));
 
         if (header.qdcount) {
-            question.name.initWithData({msg, msg_size}, iter);
-            iter += question.name.getSize();
-            question.type = read_and_increment<uint16_t>(&iter);
-            question.qclass = read_and_increment<uint16_t>(&iter);
+            question.name.initWithData(buffer, buffer.getCurrData());
+            buffer.seek(question.name.getSize());
+            question.type = buffer.read_bytes<uint16_t>();
+            question.qclass = buffer.read_bytes<uint16_t>();
+        } else {
+            // TODO: throw an exception
         }
 
         for (int i = 0; i < header.ancount; ++i) {
             t_resource_record record;
-            record.name.initWithData({msg, msg_size}, iter);
-            iter += record.name.getSize();
-            record.type = read_and_increment<uint16_t>(&iter);
-            record.qclass = read_and_increment<uint16_t>(&iter);
-            record.ttl = read_and_increment<uint32_t>(&iter);
-            record.length = read_and_increment<uint16_t>(&iter); 
+            record.name.initWithData(buffer, buffer.getCurrData());
+            buffer.seek(record.name.getSize());
+            record.type = buffer.read_bytes<uint16_t>();
+            record.qclass = buffer.read_bytes<uint16_t>();
+            record.ttl = buffer.read_bytes<uint32_t>();
+            record.length = buffer.read_bytes<uint16_t>();
 
-            // TODO: remove test and read data
-            // --> potential TTL issue on reset
             cout << "\n";
             cout << "Name: " << record.name.getHostname() << '\n';
             cout << "Type: " << type_to_string(record.type) << '\n';
             cout << "Class: " << record.qclass << '\n';
             cout << "TTL: " << record.ttl << '\n';
             cout << "Data len: " << record.length << '\n';
+
+            // TODO: process data
         }
     }
 

@@ -19,10 +19,36 @@ namespace Network {
 
         auto write(const char* bytes, unsigned long len) -> void;
 
+        // TODO: check bounds
+        auto seek(int value) { pos += value; }
+
         [[nodiscard]] auto getData() const { return buffer.data(); }
+        [[nodiscard]] auto getCurrData() const { return buffer.data() + pos; }
         [[nodiscard]] auto getSize() const { return size; }
 
+        template <typename T> auto read_bytes() -> T {
+            if (std::is_same_v<T, uint32_t>) {
+                uint32_t output = static_cast<T>(
+                    (buffer[pos] << 24) + 
+                    (buffer[pos + 1] << 16) +
+                    (buffer[pos + 2] << 8) +
+                    (buffer[pos + 3])
+                );
+                seek(sizeof(T));
+                return output;
+            }
+            if (std::is_same_v<T, uint16_t>) {
+                uint16_t output = static_cast<T>(
+                    (buffer[pos] << 8) +
+                    (buffer[pos + 1])
+                );
+                seek(sizeof(T));
+                return output;
+            }
+        }
+
     private:
+        int pos = 0;
         uint16_t size = 0;
         std::array<char, max_size> buffer;
     };
