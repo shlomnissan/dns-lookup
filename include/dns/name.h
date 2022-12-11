@@ -22,12 +22,13 @@ namespace Dns {
         auto initWithData(const Buffer& message, const char* p) -> void;
         auto initWithHostname(string_view hostname) -> void;
 
-        [[nodiscard]] auto getSize() const -> int { return size; }
+        [[nodiscard]] auto getSize() const -> int;
         [[nodiscard]] auto getName() const -> string { return name; };
         [[nodiscard]] auto getHostname() const -> string { return hostname; };
 
     private:
         int size = 0;
+        int compression_label_count = 0;
         string name {};
         string hostname {};
         vector<std::string> labels {};

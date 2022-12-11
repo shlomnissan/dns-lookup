@@ -52,13 +52,13 @@ namespace Dns {
     struct t_question {
         Name name;
         uint16_t type;
-        uint16_t clazz;
+        uint16_t qclass;
     };
 
     struct t_resource_record {
         Name name;
         uint16_t type;
-        uint16_t clazz;
+        uint16_t qclass;
         uint32_t ttl;
         uint16_t length;
     };

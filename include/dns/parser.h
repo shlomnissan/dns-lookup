@@ -4,7 +4,7 @@
 #ifndef DNS_LOOKUP_DNS_PARSER_H
 #define DNS_LOOKUP_DNS_PARSER_H
 
-#include <string>
+#include <vector>
 
 #include "dns/types.h"
 #include "network/buffer.h"
@@ -25,6 +25,8 @@ namespace Dns {
     private:
         t_header header {};
         t_question question {};
+        
+        vector<t_resource_record> resource_records;
 
         auto parseMessage(const char* msg, uint16_t msg_size) -> void;
     };

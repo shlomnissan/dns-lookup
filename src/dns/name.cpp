@@ -14,8 +14,9 @@ namespace Dns {
             return;
         }
         if (isCompressionLabel(p)) {
+            compression_label_count++;
             auto addr = getCompressionLabelAddress(p);
-            return initWithData(message, message.getData() + addr);
+            initWithData(message, message.getData() + addr);
         } else {
             const int len = *p++;
             string label {p, p + len};
@@ -31,6 +32,10 @@ namespace Dns {
             labels.emplace_back(label);
         }
         processLabels();
+    }
+
+    auto Name::getSize() const -> int {
+        return compression_label_count ? compression_label_count * 2 : size;
     }
 
     auto Name::processLabels() -> void {

@@ -19,8 +19,8 @@ namespace Network {
 
         auto write(const char* bytes, unsigned long len) -> void;
 
-        [[nodiscard]] const char* getData() const { return buffer.data(); }
-        [[nodiscard]] uint16_t getSize() const { return size; }
+        [[nodiscard]] auto getData() const { return buffer.data(); }
+        [[nodiscard]] auto getSize() const { return size; }
 
     private:
         uint16_t size = 0;

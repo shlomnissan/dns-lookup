@@ -2,11 +2,27 @@
 // Author: Shlomi Nissan (shlomi@betamark.com)
 
 #include <arpa/inet.h>
+#include <cstdint>
 #include <cstring>
 #include <iostream>
 
 #include "dns/dns_utilities.h"
 #include "dns/parser.h"
+
+// TODO: move to buffer
+template <typename T> auto read_and_increment(const char** data) -> T {
+    if (std::is_same_v<T, uint32_t>) {
+        uint32_t v32 =
+            **data << 24 | *(*data + 1) << 16 | *(*data + 2) << 8 | *(*data + 3);
+        *data += 4;
+        return v32;
+    }
+    if (std::is_same_v<T, uint16_t>) {
+        uint16_t v16 = **data << 8 | *(*data + 1);
+        *data += 2;
+        return v16;
+    }
+}
 
 namespace Dns {
     using std::cout;
@@ -31,12 +47,28 @@ namespace Dns {
         if (header.qdcount) {
             question.name.initWithData({msg, msg_size}, iter);
             iter += question.name.getSize();
-            question.type = (iter[0] << 8) | iter[1];
-            question.clazz = (iter[2] << 8) | iter[3];
-            iter += 4;
+            question.type = read_and_increment<uint16_t>(&iter);
+            question.qclass = read_and_increment<uint16_t>(&iter);
         }
 
-        // TODO: parse RRs
+        for (int i = 0; i < header.ancount; ++i) {
+            t_resource_record record;
+            record.name.initWithData({msg, msg_size}, iter);
+            iter += record.name.getSize();
+            record.type = read_and_increment<uint16_t>(&iter);
+            record.qclass = read_and_increment<uint16_t>(&iter);
+            record.ttl = read_and_increment<uint32_t>(&iter);
+            record.length = read_and_increment<uint16_t>(&iter); 
+
+            // TODO: remove test and read data
+            // --> potential TTL issue on reset
+            cout << "\n";
+            cout << "Name: " << record.name.getHostname() << '\n';
+            cout << "Type: " << type_to_string(record.type) << '\n';
+            cout << "Class: " << record.qclass << '\n';
+            cout << "TTL: " << record.ttl << '\n';
+            cout << "Data len: " << record.length << '\n';
+        }
     }
 
     auto Parser::prettyPrint() const -> void {
@@ -59,7 +91,7 @@ namespace Dns {
             cout << question.name.getHostname() << ".";
             cout << "\t\t"
                  << "IN";
-            cout << "\t\t" << type_to_string(question.type);
+            cout << "\t" << type_to_string(question.type);
             cout << "\n";
         }
 

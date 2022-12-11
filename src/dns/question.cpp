@@ -24,13 +24,13 @@ namespace Dns {
         t_question question {};
         question.name.initWithHostname(hostname);
         question.type = htons(getTypeIDFromString(type));
-        question.clazz = htons(/* internet = */ 1);
+        question.qclass = htons(/* internet = */ 1);
 
         auto name_len = question.name.getSize();
         buffer.write(question.name.getName().c_str(), name_len);
         buffer.write(reinterpret_cast<char*>(&question.type), sizeof(question.type));
         buffer.write(
-            reinterpret_cast<char*>(&question.clazz), sizeof(question.clazz)
+            reinterpret_cast<char*>(&question.qclass), sizeof(question.qclass)
         );
     }
 
