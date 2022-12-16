@@ -2,38 +2,46 @@
 // Author: Shlomi Nissan (shlomi@betamark.com)
 
 #include <iostream>
-#include <unistd.h>
 
+#include "dns/dns_utilities.h"
 #include "dns/parser.h"
 #include "dns/question.h"
-#include "dns/dns_utilities.h"
+#include "network/endpoint.h"
 #include "network/socket.h"
 
-using namespace Dns;
-using namespace Network;
-
 auto main(int argc, char* argv[]) -> int {
-    std::cout << "DNS lookup v1.0\n";
+    using namespace Dns;
+    using namespace Network;
+    using std::cerr;
+    using std::cout;
+
+    cout << "DNS lookup v1.0\n";
     if (argc < 3) {
-        std::cout << "Usage: dns_lookup HOSTNAME TYPE\n";
-        std::cout << "Example: dns_lookup example.com aaaa\n";
+        cout << "Usage: dns_lookup HOSTNAME TYPE\n";
+        cout << "Example: dns_lookup example.com aaaa\n";
         return 1;
     }
 
     try {
         Question question {0xABCD, argv[1], argv[2]};
+        Endpoint endpoint {get_dns_server(), "53"};
+        Socket socket {endpoint};
 
-        Socket socket {{get_dns_server(), "53"}};
         if (!socket.send(question.buffer)) {
-            std::cerr << "Failed to send DNS question.\n";
+            cerr << "Failed to send DNS question.\n";
             exit(EXIT_FAILURE);
         }
 
         Parser parser {socket.receive()};
         parser.prettyPrint();
 
+        // TODO: get header
+        // TODO: get question
+        // TODO: get answers
+
+        // TODO: print data
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << '\n';
+        cerr << "Error: " << e.what() << '\n';
         return 1;
     }
 

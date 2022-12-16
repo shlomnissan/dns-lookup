@@ -41,7 +41,8 @@ TEST(dns_name_test, InitNameWithDataWithCompressionLabels) {
 
     Name name {};
     name.initWithData(message, p);
-    EXPECT_EQ(name.getSize(), 17);
+
+    EXPECT_EQ(name.getSize(), 2); // each compression label is 2-bytes
     EXPECT_EQ(name.getHostname(), "www.example.com");
 }
 

@@ -27,23 +27,22 @@ namespace Network {
         [[nodiscard]] auto getSize() const { return size; }
 
         template <typename T> auto read_bytes() -> T {
-            if (std::is_same_v<T, uint32_t>) {
-                uint32_t output = static_cast<T>(
-                    (buffer[pos] << 24) + 
-                    (buffer[pos + 1] << 16) +
-                    (buffer[pos + 2] << 8) +
-                    (buffer[pos + 3])
-                );
+            if (std::is_same_v<T, uint8_t>) {
+                uint8_t output = static_cast<T>(buffer[pos]);
                 seek(sizeof(T));
                 return output;
             }
             if (std::is_same_v<T, uint16_t>) {
-                uint16_t output = static_cast<T>(
-                    (buffer[pos] << 8) +
-                    (buffer[pos + 1])
-                );
-                seek(sizeof(T));
-                return output;
+                auto b0 = read_bytes<uint8_t>();
+                auto b1 = read_bytes<uint8_t>();
+                return (b0 << 8) + b1;
+            }
+            if (std::is_same_v<T, uint32_t>) {
+                auto b0 = read_bytes<uint8_t>();
+                auto b1 = read_bytes<uint8_t>();
+                auto b2 = read_bytes<uint8_t>();
+                auto b3 = read_bytes<uint8_t>();
+                return (b0 << 24) + (b1 << 16) + (b2 << 8) + b3;
             }
         }
 

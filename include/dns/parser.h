@@ -14,7 +14,9 @@ namespace Dns {
 
     class Parser {
     public:
-        explicit Parser(Buffer buffer);
+        explicit Parser(const Buffer& buffer);
+
+        // TODO: get header
 
         // TODO: get question
 
@@ -23,12 +25,14 @@ namespace Dns {
         void prettyPrint() const;
 
     private:
+        Buffer buffer;
+
         t_header header {};
         t_question question {};
-        
-        vector<t_resource_record> resource_records;
 
-        auto parseMessage(Buffer& buffer) -> void;
+        vector<t_resource_record> answer_rrs;
+
+        auto parseMessage() -> void;
     };
 
     struct MessageIsTooShort : public std::exception {

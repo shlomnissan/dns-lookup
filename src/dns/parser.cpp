@@ -12,14 +12,10 @@
 namespace Dns {
     using std::cout;
 
-    Parser::Parser(Buffer buffer) {
+    Parser::Parser(const Buffer& buffer) : buffer(buffer) { parseMessage(); }
+
+    auto Parser::parseMessage() -> void {
         if (buffer.getSize() < sizeof(t_header)) { throw MessageIsTooShort(); }
-
-        parseMessage(buffer);
-    }
-
-    auto Parser::parseMessage(Buffer& buffer) -> void {
-        // TODO: throw an exception if there's no header
 
         memcpy(&header, buffer.getData(), sizeof(header));
         header.id = ntohs(header.id);
@@ -36,7 +32,7 @@ namespace Dns {
             question.type = buffer.read_bytes<uint16_t>();
             question.qclass = buffer.read_bytes<uint16_t>();
         } else {
-            // TODO: throw an exception
+            // TODO: throw an exception if there's no question count
         }
 
         for (int i = 0; i < header.ancount; ++i) {
@@ -48,21 +44,21 @@ namespace Dns {
             record.ttl = buffer.read_bytes<uint32_t>();
             record.length = buffer.read_bytes<uint16_t>();
 
-            cout << "\n";
-            cout << "Name: " << record.name.getHostname() << '\n';
-            cout << "Type: " << type_to_string(record.type) << '\n';
-            cout << "Class: " << record.qclass << '\n';
-            cout << "TTL: " << record.ttl << '\n';
-            cout << "Data len: " << record.length << '\n';
+            if (record.length > Buffer::max_size) {
+                // TODO: throw an exception if the buffer is too small
+            }
 
-            // TODO: process data
+            record.data = {buffer.getCurrData(), record.length};
+            buffer.seek(record.length);
+
+            answer_rrs.emplace_back(record);
         }
     }
 
     auto Parser::prettyPrint() const -> void {
         cout << "\n;;HEADER\n";
-        cout << "opcode: " << opcode_to_string(header.opcode) << ", "
-             << "status: " << rcode_to_string(header.rcode) << ", "
+        cout << "opcode: " << opcode_to_str(header.opcode) << ", "
+             << "status: " << rcode_to_str(header.rcode) << ", "
              << "id: " << std::hex << header.id << '\n';
         cout << "flags:";
         if (header.qr) cout << " qr";
@@ -79,10 +75,21 @@ namespace Dns {
             cout << question.name.getHostname() << ".";
             cout << "\t\t"
                  << "IN";
-            cout << "\t" << type_to_string(question.type);
-            cout << "\n";
+            cout << '\t' << type_to_str(question.type);
         }
 
-        if (header.ancount) { cout << "\n;;ANSWER SECTION\n"; }
+        cout << '\n';
+
+        if (header.ancount) {
+            cout << "\n;;ANSWER SECTION\n";
+            for (auto record : answer_rrs) {
+                cout << record.name.getHostname() << ".";
+                cout << '\t';
+                cout << std::dec << record.ttl << '\t';
+                cout << "IN";
+                cout << '\t' << type_to_str(record.type);
+                cout << '\t' << record.dataString(buffer) << '\n';
+            }
+        }
     }
 } // namespace Dns

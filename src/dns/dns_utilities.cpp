@@ -21,7 +21,7 @@ namespace Dns {
         return default_dns;
     }
 
-    auto type_to_string(uint16_t type) -> string_view {
+    auto type_to_str(uint16_t type) -> string {
         if (type == TYPE_A) return "A";
         if (type == TYPE_NS) return "NS";
         if (type == TYPE_CNAME) return "CNAME";
@@ -32,7 +32,7 @@ namespace Dns {
         return "UNDEFINED";
     }
 
-    auto rcode_to_string(uint8_t rcode) -> string_view {
+    auto rcode_to_str(uint8_t rcode) -> string {
         if (rcode == RCODE_NOERROR) return "NOERROR";
         if (rcode == RCODE_FORMERR) return "FORMERR";
         if (rcode == RCODE_SERVFAIL) return "SERVFAIL";
@@ -42,7 +42,7 @@ namespace Dns {
         return "UNDEFINED";
     }
 
-    auto opcode_to_string(uint8_t opcode) -> string_view {
+    auto opcode_to_str(uint8_t opcode) -> string {
         if (opcode == OPCODE_QUERY) return "QUERY";
         if (opcode == OPCODE_IQUERY) return "IQUERY";
         if (opcode == OPCODE_STATUS) return "STATUS";

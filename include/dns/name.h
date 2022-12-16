@@ -19,6 +19,8 @@ namespace Dns {
     public:
         Name() = default;
 
+        Name(const Buffer& message, const char* p) { initWithData(message, p); }
+
         auto initWithData(const Buffer& message, const char* p) -> void;
         auto initWithHostname(string_view hostname) -> void;
 
