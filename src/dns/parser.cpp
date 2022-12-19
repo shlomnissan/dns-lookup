@@ -5,13 +5,11 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <sstream>
 
-#include "dns/dns_utilities.h"
 #include "dns/parser.h"
 
 namespace Dns {
-    using std::cout;
-
     Parser::Parser(const Buffer& buffer) : buffer(buffer) { parseMessage(); }
 
     auto Parser::parseMessage() -> void {
@@ -55,41 +53,45 @@ namespace Dns {
         }
     }
 
-    auto Parser::prettyPrint() const -> void {
-        cout << "\n;;HEADER\n";
-        cout << "opcode: " << opcode_to_str(header.opcode) << ", "
-             << "status: " << rcode_to_str(header.rcode) << ", "
-             << "id: " << std::hex << header.id << '\n';
-        cout << "flags:";
-        if (header.qr) cout << " qr";
-        if (header.rd) cout << " rd";
-        if (header.ra) cout << " ra";
-        cout << "; ";
-        cout << "QUERY: " << header.qdcount << ", ";
-        cout << "ANSWER: " << header.ancount << ", ";
-        cout << "AUTHORITY: " << header.nscount << ", ";
-        cout << "ADDITIONAL: " << header.arcount << "\n";
-
-        if (header.qdcount) {
-            cout << "\n;;QUSTION SECTION\n";
-            cout << question.name.getHostname() << ".";
-            cout << "\t\t"
-                 << "IN";
-            cout << '\t' << type_to_str(question.type);
+    auto Parser::recordToString(t_resource_record record) const -> string {
+        if (record.length == 0 || record.data.getSize() != record.length) {
+            // TODO: raise exception
         }
+        string output;
 
-        cout << '\n';
-
-        if (header.ancount) {
-            cout << "\n;;ANSWER SECTION\n";
-            for (auto record : answer_rrs) {
-                cout << record.name.getHostname() << ".";
-                cout << '\t';
-                cout << std::dec << record.ttl << '\t';
-                cout << "IN";
-                cout << '\t' << type_to_str(record.type);
-                cout << '\t' << record.dataString(buffer) << '\n';
+        if (record.type == TYPE_A) {
+            // parse A record
+            if (record.length != 4) {
+                // TODO: raise an exception
             }
+            for (int i = 0; i < 4; ++i) {
+                auto byte = record.data.read_bytes<uint8_t>();
+                output += std::to_string(static_cast<int>(byte));
+                if (i != 3) output += ".";
+            }
+        } else if (record.type == TYPE_AAAA) {
+            // parse AAAA record
+            if (record.length != 16) {
+                // TODO: raise an exception
+            }
+            std::stringstream ss {};
+            ss << std::hex;
+            for (int i = 0; i < 8; ++i) {
+                ss << record.data.read_bytes<uint16_t>();
+                if (i != 7) ss << ":";
+            }
+            output = ss.str();
+        } else if (record.type == TYPE_MX) {
+            auto preference = record.data.read_bytes<uint16_t>();
+            output += std::to_string(static_cast<int>(preference)) + " ";
+            output += Name(buffer, record.data.getCurrData()).getHostname();
         }
+
+        // TODO: implement NS
+        // TODO: implement CNAME
+        // TODO: implement TXT
+        // TODO: implement ANY
+
+        return output;
     }
 } // namespace Dns
