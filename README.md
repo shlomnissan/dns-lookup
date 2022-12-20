@@ -25,7 +25,7 @@ If the build was successful, the build folder should contain the `dns_lookup` ex
 dns_lookup -host github.com -type MX
 ```
 - `-host` The hostname that you wish to look up [**required**]
-- `-type` The record type (A, NS, CNAME, MX, TXT, and ANY) [optional]
+- `-type` The record type (A, NS, CNAME, MX, TXT, AAAA, and ANY) [optional]
 - `-server` The DNS server address [optional]
 
 ## MIT licence
