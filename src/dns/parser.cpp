@@ -29,23 +29,17 @@ namespace Dns {
             buffer.seek(question.name.getSize());
             question.type = buffer.read_bytes<uint16_t>();
             question.qclass = buffer.read_bytes<uint16_t>();
-        } else {
-            // TODO: throw an exception if there's no question count
         }
 
         for (int i = 0; i < header.ancount; ++i) {
             t_resource_record record;
             record.name.initWithData(buffer, buffer.getCurrData());
             buffer.seek(record.name.getSize());
+
             record.type = buffer.read_bytes<uint16_t>();
             record.qclass = buffer.read_bytes<uint16_t>();
             record.ttl = buffer.read_bytes<uint32_t>();
             record.length = buffer.read_bytes<uint16_t>();
-
-            if (record.length > Buffer::max_size) {
-                // TODO: throw an exception if the buffer is too small
-            }
-
             record.data = {buffer.getCurrData(), record.length};
             buffer.seek(record.length);
 
@@ -54,16 +48,9 @@ namespace Dns {
     }
 
     auto Parser::recordToString(t_resource_record record) const -> string {
-        if (record.length == 0 || record.data.getSize() != record.length) {
-            // TODO: raise exception
-        }
         string output;
-
         if (record.type == TYPE_A) {
             // parse A record
-            if (record.length != 4) {
-                // TODO: raise an exception
-            }
             for (int i = 0; i < 4; ++i) {
                 auto byte = record.data.read_bytes<uint8_t>();
                 output += std::to_string(static_cast<int>(byte));
@@ -71,9 +58,6 @@ namespace Dns {
             }
         } else if (record.type == TYPE_AAAA) {
             // parse AAAA record
-            if (record.length != 16) {
-                // TODO: raise an exception
-            }
             std::stringstream ss {};
             ss << std::hex;
             for (int i = 0; i < 8; ++i) {
@@ -82,9 +66,12 @@ namespace Dns {
             }
             output = ss.str();
         } else if (record.type == TYPE_MX) {
+            // parse MX record
             auto preference = record.data.read_bytes<uint16_t>();
             output += std::to_string(static_cast<int>(preference)) + " ";
             output += Name(buffer, record.data.getCurrData()).getHostname();
+        } else {
+            throw InvalidAnswerType();
         }
 
         // TODO: implement NS

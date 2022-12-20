@@ -20,12 +20,12 @@ namespace Dns {
 
         auto getOpcode() const { return header.opcode; }
         auto getRcode() const { return header.rcode; }
-        auto getHostname() const { return question.name.getHostname(); }
-        auto getQuestionType() const { return question.type; }
+        auto getId() const { return header.id; }
         auto getQuestionCount() const -> int { return header.qdcount; }
+        auto getQuestionType() const { return question.type; }
+        auto getHostname() const { return question.name.getHostname(); }
         auto getAnswerCount() const -> int { return header.ancount; }
         auto getAnswers() const -> vector<t_resource_record> { return answer_rrs; }
-        auto getId() const { return header.id; }
 
         auto recordToString(t_resource_record record) const -> string;
 
@@ -41,6 +41,12 @@ namespace Dns {
     struct MessageIsTooShort : public std::exception {
         const char* what() const throw() override {
             return "The DNS message is too short to be valid.";
+        }
+    };
+
+    struct InvalidAnswerType : public std::exception {
+        const char* what() const throw() override {
+            return "The DNS resource record type is invalid or not supported.";
         }
     };
 } // namespace Dns

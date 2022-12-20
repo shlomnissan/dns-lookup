@@ -54,3 +54,5 @@ TEST(dns_name_test, InitNameWithHostname) {
     EXPECT_EQ(name.getHostname(), "www.example.com");
     EXPECT_EQ(strcmp(name.getName().c_str(), (const char*)dns_request + 12), 0);
 }
+
+// TODO: when init with name 0, expect name of 0

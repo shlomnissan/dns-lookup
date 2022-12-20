@@ -31,7 +31,7 @@ namespace Dns {
 
     struct InvalidQuestionType : public std::exception {
         const char* what() const throw() override {
-            return "The DNS record type you requested is invalid.";
+            return "The DNS record type you requested is invalid or not supported.";
         }
     };
 } // namespace Dns

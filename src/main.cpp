@@ -57,6 +57,8 @@ auto printResult(const Dns::Parser& parser) -> void {
         cout << parser.getHostname() << ".\t\t";
         cout << "IN\t";
         cout << Dns::type_to_str(parser.getQuestionType()) << '\n';
+    } else {
+        cout << "\nNo question found.\n";
     }
 
     if (parser.getAnswerCount()) {
