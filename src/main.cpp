@@ -1,11 +1,13 @@
 // Copyright 2022 Betamark Pty Ltd. All rights reserved.
 // Author: Shlomi Nissan (shlomi@betamark.com)
 
+#include <gflags/gflags.h>
 #include <iostream>
 
 #include "dns/dns_utilities.h"
 #include "dns/parser.h"
 #include "dns/question.h"
+
 #include "network/endpoint.h"
 #include "network/socket.h"
 
