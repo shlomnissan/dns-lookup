@@ -9,38 +9,37 @@
 #include "dns/question.h"
 
 #include "network/endpoint.h"
+#include "network/net_utilities.h"
 #include "network/socket.h"
+
+#include "flags.h"
 
 auto printResult(const Dns::Parser& parser) -> void;
 
 auto main(int argc, char* argv[]) -> int {
-    using namespace Dns;
-    using namespace Network;
-    using std::cerr;
-    using std::cout;
+    gflags::SetUsageMessage("dns_lookup -host example.com -type A -server 8.8.8.8");
+    gflags::SetVersionString("1.0.0");
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-    if (argc < 3) {
-        cout << "Usage: dns_lookup HOSTNAME TYPE\n";
-        cout << "Example: dns_lookup example.com aaaa\n";
-        return 1;
-    }
+    auto server = FLAGS_server.empty() ? Dns::get_dns_server() : FLAGS_server;
+    auto type = Network::to_uppercase(FLAGS_type); 
 
     try {
-        cout << "\n;;DNS LOOKUP (" << get_dns_server() << "#53)\n";
+        std::cout << "\n;;DNS LOOKUP (" << server << "#53)\n";
 
-        Question question {0xABCD, argv[1], argv[2]};
-        Endpoint endpoint {get_dns_server(), "53"};
-        Socket socket {endpoint};
+        Dns::Question question {0xABCD, FLAGS_host, type};
+        Network::Endpoint endpoint {server, "53"};
+        Network::Socket socket {endpoint};
 
         if (!socket.send(question.buffer)) {
-            cerr << "Failed to send DNS question.\n";
+            std::cerr << "Failed to send DNS question.\n";
             exit(EXIT_FAILURE);
         }
 
-        Parser parser {socket.receive()};
+        Dns::Parser parser {socket.receive()};
         printResult(parser);
     } catch (const std::exception& e) {
-        cerr << "Error: " << e.what() << '\n';
+        std::cerr << "Error: " << e.what() << '\n';
         return 1;
     }
 

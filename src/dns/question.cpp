@@ -35,13 +35,13 @@ namespace Dns {
     }
 
     auto Question::getTypeIDFromString(string_view type) -> uint16_t {
-        if (type == "a") return TYPE_A;
-        if (type == "ns") return TYPE_NS;
-        if (type == "cname") return TYPE_CNAME;
-        if (type == "mx") return TYPE_MX;
-        if (type == "txt") return TYPE_TXT;
-        if (type == "aaaa") return TYPE_AAAA;
-        if (type == "any") return TYPE_ANY;
+        if (type == "A") return TYPE_A;
+        if (type == "NS") return TYPE_NS;
+        if (type == "CNAME") return TYPE_CNAME;
+        if (type == "MX") return TYPE_MX;
+        if (type == "TXT") return TYPE_TXT;
+        if (type == "AAAA") return TYPE_AAAA;
+        if (type == "ANY") return TYPE_ANY;
 
         throw InvalidQuestionType();
     }
