@@ -18,24 +18,31 @@ namespace Dns {
     public:
         explicit Parser(const Buffer& buffer);
 
-        auto getOpcode() const { return header.opcode; }
-        auto getRcode() const { return header.rcode; }
-        auto getId() const { return header.id; }
-        auto getQuestionCount() const -> int { return header.qdcount; }
-        auto getQuestionType() const { return question.type; }
-        auto getHostname() const { return question.name.getHostname(); }
-        auto getAnswerCount() const -> int { return header.ancount; }
-        auto getAnswers() const -> vector<t_resource_record> { return answer_rrs; }
+        [[nodiscard]] auto getOpcode() const { return header.opcode; }
+        [[nodiscard]] auto getRcode() const { return header.rcode; }
+        [[nodiscard]] auto getId() const { return header.id; }
+        [[nodiscard]] auto getQuestionCount() const -> int { return header.qdcount; }
+        [[nodiscard]] auto getQuestionType() const { return question.type; }
+        [[nodiscard]] auto getHostname() const { return question.name.getHostname(); }
+        [[nodiscard]] auto getAnswers() const -> vector<t_resource_record> { return answer_rrs; }
+        [[nodiscard]] auto getAnswerCount() const -> int { return answer_count; }
 
-        auto recordToString(t_resource_record record) const -> string;
+        [[nodiscard]] auto recordToString(t_resource_record record) const -> string;
 
     private:
+        int answer_count = 0;
         Buffer buffer;
         t_header header {};
         t_question question {};
         vector<t_resource_record> answer_rrs;
 
         auto parseMessage() -> void;
+    };
+
+    struct MessageIsTruncated : public std::exception {
+        const char* what() const throw() override {
+            return "The DNS message is truncated. DNS over TCP is not supported.";
+        }
     };
 
     struct MessageIsTooShort : public std::exception {

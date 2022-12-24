@@ -25,6 +25,7 @@ namespace Dns {
         if (type == TYPE_A) return "A";
         if (type == TYPE_NS) return "NS";
         if (type == TYPE_CNAME) return "CNAME";
+        if (type == TYPE_SOA) return "SOA";
         if (type == TYPE_MX) return "MX";
         if (type == TYPE_TXT) return "TXT";
         if (type == TYPE_AAAA) return "AAAA";

@@ -22,12 +22,11 @@ auto main(int argc, char* argv[]) -> int {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
 
     auto server = FLAGS_server.empty() ? Dns::get_dns_server() : FLAGS_server;
-    auto type = Network::to_uppercase(FLAGS_type); 
 
     try {
         std::cout << "\n;;DNS LOOKUP (" << server << "#53)\n";
 
-        Dns::Question question {0xABCD, FLAGS_host, type};
+        Dns::Question question {0xABCD, FLAGS_host, FLAGS_type};
         Network::Endpoint endpoint {server, "53"};
         Network::Socket socket {endpoint};
 

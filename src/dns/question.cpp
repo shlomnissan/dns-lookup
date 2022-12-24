@@ -8,6 +8,8 @@
 #include "dns/question.h"
 #include "dns/types.h"
 
+#include "network/net_utilities.h"
+
 namespace Dns {
     Question::Question(uint16_t id, string_view hostname, string_view type)
         : id(id) {
@@ -23,7 +25,7 @@ namespace Dns {
 
         t_question question {};
         question.name.initWithHostname(hostname);
-        question.type = htons(getTypeIDFromString(type));
+        question.type = htons(getTypeIDFromString(Network::to_uppercase(type)));
         question.qclass = htons(/* internet = */ 1);
 
         auto name_len = question.name.getSize();

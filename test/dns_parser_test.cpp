@@ -101,6 +101,19 @@ TEST(dns_parser_tests, ThrowsMessageIsTooShort) {
     EXPECT_THROW({ Parser {buffer}; }, MessageIsTooShort);
 }
 
+TEST(dns_parser_tests, ThrowsMessageIsTruncated) {
+    // DNS response payload with truncated message
+    const unsigned char dns_response[] = {
+        0x2b, 0xa8, 0x83, 0x80, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+        0x07, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x03, 0x63, 0x6f, 0x6d,
+        0x00, 0x00, 0x1c, 0x00, 0x01, 0xc0, 0x0c, 0x00, 0x1c, 0x00, 0x01, 0x00,
+        0x00, 0x4e, 0x87, 0x00, 0x10, 0x26, 0x06, 0x28, 0x00, 0x02, 0x20, 0x00,
+        0x01, 0x02, 0x48, 0x18, 0x93, 0x25, 0xc8, 0x19, 0x46};
+    Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
+
+    EXPECT_THROW({ Parser parser {buffer}; }, MessageIsTruncated);
+}
+
 TEST(dns_parser_tests, ThrowsInvalidAnswerType) {
     std::uint8_t invalid_type = 0x03;
     // Invalid DNS response payload for www.example.com
@@ -115,7 +128,7 @@ TEST(dns_parser_tests, ThrowsInvalidAnswerType) {
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
     Parser parser {buffer};
 
-    EXPECT_THROW(
-        { parser.recordToString(parser.getAnswers()[0]); }, InvalidAnswerType
-    );
+    EXPECT_THROW({
+        parser.recordToString(parser.getAnswers()[0]);
+    }, InvalidAnswerType);
 }

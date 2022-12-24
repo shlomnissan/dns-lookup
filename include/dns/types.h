@@ -19,6 +19,7 @@ namespace Dns {
     static constexpr uint8_t TYPE_A = 1;
     static constexpr uint8_t TYPE_NS = 2;
     static constexpr uint8_t TYPE_CNAME = 5;
+    static constexpr uint8_t TYPE_SOA = 6;
     static constexpr uint8_t TYPE_MX = 15;
     static constexpr uint8_t TYPE_TXT = 16;
     static constexpr uint8_t TYPE_AAAA = 28;

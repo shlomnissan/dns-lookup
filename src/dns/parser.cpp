@@ -22,6 +22,10 @@ namespace Dns {
         header.nscount = ntohs(header.nscount);
         header.arcount = ntohs(header.arcount);
 
+        if (header.tc) { throw MessageIsTruncated(); }
+
+        answer_count = header.ancount + header.nscount + header.arcount;
+
         buffer.seek(sizeof(header));
 
         if (header.qdcount) {
@@ -31,7 +35,7 @@ namespace Dns {
             question.qclass = buffer.read_bytes<uint16_t>();
         }
 
-        for (int i = 0; i < header.ancount; ++i) {
+        for (int i = 0; i < answer_count; ++i) {
             t_resource_record record;
             record.name.initWithData(buffer, buffer.getCurrData());
             buffer.seek(record.name.getSize());
