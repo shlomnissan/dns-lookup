@@ -10,7 +10,9 @@
 #include "dns/parser.h"
 
 namespace Dns {
-    Parser::Parser(const Buffer& buffer) : buffer(buffer) { parseMessage(); }
+    Parser::Parser(uint16_t id, const Buffer& buffer) : id(id), buffer(buffer) {
+        parseMessage();
+    }
 
     auto Parser::parseMessage() -> void {
         if (buffer.getSize() < sizeof(t_header)) { throw MessageIsTooShort(); }
@@ -22,6 +24,7 @@ namespace Dns {
         header.nscount = ntohs(header.nscount);
         header.arcount = ntohs(header.arcount);
 
+        if (header.id != id) { throw IDMismatch(); }
         if (header.tc) { throw MessageIsTruncated(); }
 
         answer_count = header.ancount + header.nscount + header.arcount;

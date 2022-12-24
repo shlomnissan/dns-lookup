@@ -4,6 +4,7 @@
 #ifndef DNS_LOOKUP_DNS_PARSER_H
 #define DNS_LOOKUP_DNS_PARSER_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -16,7 +17,7 @@ namespace Dns {
 
     class Parser {
     public:
-        explicit Parser(const Buffer& buffer);
+        explicit Parser(uint16_t id, const Buffer& buffer);
 
         [[nodiscard]] auto getOpcode() const { return header.opcode; }
         [[nodiscard]] auto getRcode() const { return header.rcode; }
@@ -30,13 +31,20 @@ namespace Dns {
         [[nodiscard]] auto recordToString(t_resource_record record) const -> string;
 
     private:
-        int answer_count = 0;
+        uint16_t id;
+        uint16_t answer_count = 0;
         Buffer buffer;
         t_header header {};
         t_question question {};
         vector<t_resource_record> answer_rrs;
 
         auto parseMessage() -> void;
+    };
+
+    struct IDMismatch : public std::exception {
+        const char* what() const throw() override {
+            return "The DNS repsonse ID doesn't match the request ID.";
+        }
     };
 
     struct MessageIsTruncated : public std::exception {

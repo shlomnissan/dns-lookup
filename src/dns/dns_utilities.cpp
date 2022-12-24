@@ -1,6 +1,9 @@
 // Copyright 2022 Betamark Pty Ltd. All rights reserved.
 // Author: Shlomi Nissan (shlomi@betamark.com)
 
+#include <cstdint>
+#include <random>
+
 #include "dns/dns_utilities.h"
 #include "dns/types.h"
 #include "network/net_utilities.h"
@@ -19,6 +22,12 @@ namespace Dns {
             }
         }
         return default_dns;
+    }
+
+    auto generate_id() -> uint16_t {
+        std::default_random_engine engine {(std::random_device())()};
+        std::uniform_int_distribution<uint16_t> rand_dist {0x0000, 0xFFFF};
+        return rand_dist(engine);
     }
 
     auto type_to_str(uint16_t type) -> string {

@@ -23,7 +23,7 @@ TEST(dns_parser_tests, Parse_A_RecordCorrectly) {
     };
 
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
-    Parser parser {buffer};
+    Parser parser {0xABCD, buffer};
 
     EXPECT_EQ(parser.getOpcode(), OPCODE_QUERY);
     EXPECT_EQ(parser.getRcode(), RCODE_NOERROR);
@@ -45,7 +45,7 @@ TEST(dns_parser_tests, Parse_AAAA_RecordCorrectly) {
         0x01, 0x02, 0x48, 0x18, 0x93, 0x25, 0xc8, 0x19, 0x46};
 
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
-    Parser parser {buffer};
+    Parser parser {0x2BA8, buffer};
 
     EXPECT_EQ(parser.getOpcode(), OPCODE_QUERY);
     EXPECT_EQ(parser.getRcode(), RCODE_NOERROR);
@@ -77,7 +77,7 @@ TEST(dns_parser_tests, Parse_MX_RecordCorrectly) {
     };
 
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
-    Parser parser {buffer};
+    Parser parser {0xB95C, buffer};
 
     EXPECT_EQ(parser.getOpcode(), OPCODE_QUERY);
     EXPECT_EQ(parser.getRcode(), RCODE_NOERROR);
@@ -94,11 +94,30 @@ TEST(dns_parser_tests, Parse_MX_RecordCorrectly) {
     EXPECT_EQ(parser.recordToString(parser.getAnswers()[4]), "10 alt4.aspmx.l.google.com");
 }
 
+// TODO: test ID mismatch
+
+TEST(dns_parser_tests, ThrowsIDMismatch) {
+    // DNS response payload for www.example.com (A)
+    const unsigned char dns_response[] {
+        0xab, 0xcd, 0x81, 0x80, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x03,
+        0x77, 0x77, 0x77, 0x07, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x03, 0x63,
+        0x6f, 0x6d, 0x00, 0x00, 0x01, 0x00, 0x01, 0xc0, 0x0c, 0x00, 0x01, 0x00, 0x01,
+        0x00, 0x00, 0x1a, 0xfb, 0x00, 0x04, 0x5d, 0xb8, 0xd8, 0x22,
+    };
+    Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
+
+    EXPECT_THROW({
+        auto p = Parser(0xABCC, buffer);
+    }, IDMismatch);
+}
+
 TEST(dns_parser_tests, ThrowsMessageIsTooShort) {
     const unsigned char dns_response[] = {0xab, 0xcd};
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
 
-    EXPECT_THROW({ Parser {buffer}; }, MessageIsTooShort);
+    EXPECT_THROW({
+        auto p = Parser(0xABCD, buffer);
+    }, MessageIsTooShort);
 }
 
 TEST(dns_parser_tests, ThrowsMessageIsTruncated) {
@@ -111,7 +130,9 @@ TEST(dns_parser_tests, ThrowsMessageIsTruncated) {
         0x01, 0x02, 0x48, 0x18, 0x93, 0x25, 0xc8, 0x19, 0x46};
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
 
-    EXPECT_THROW({ Parser parser {buffer}; }, MessageIsTruncated);
+    EXPECT_THROW({
+        auto p = Parser(0x2BA8, buffer);
+    }, MessageIsTruncated);
 }
 
 TEST(dns_parser_tests, ThrowsInvalidAnswerType) {
@@ -126,9 +147,9 @@ TEST(dns_parser_tests, ThrowsInvalidAnswerType) {
     };
 
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
-    Parser parser {buffer};
+    Parser parser {0xABCD, buffer};
 
     EXPECT_THROW({
-        parser.recordToString(parser.getAnswers()[0]);
+        auto str = parser.recordToString(parser.getAnswers()[0]);
     }, InvalidAnswerType);
 }

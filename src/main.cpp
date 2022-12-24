@@ -26,7 +26,9 @@ auto main(int argc, char* argv[]) -> int {
     try {
         std::cout << "\n;;DNS LOOKUP (" << server << "#53)\n";
 
-        Dns::Question question {0xABCD, FLAGS_host, FLAGS_type};
+        auto message_id = Dns::generate_id();
+
+        Dns::Question question{message_id, FLAGS_host, FLAGS_type};
         Network::Endpoint endpoint {server, "53"};
         Network::Socket socket {endpoint};
 
@@ -35,7 +37,7 @@ auto main(int argc, char* argv[]) -> int {
             exit(EXIT_FAILURE);
         }
 
-        Dns::Parser parser {socket.receive()};
+        Dns::Parser parser {message_id, socket.receive()};
         printResult(parser);
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << '\n';
