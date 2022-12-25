@@ -12,5 +12,20 @@ namespace Network {
         }
     }
 
-    Endpoint::~Endpoint() { freeaddrinfo(address); }
+    Endpoint::Endpoint(Endpoint&& src) noexcept : address(src.address) {
+        src.address = nullptr;
+    }
+
+    auto Endpoint::operator=(Endpoint&& rhs) noexcept -> Endpoint& {
+        if (this != &rhs) {
+            std::swap(address, rhs.address);
+        }
+        return *this;
+    }
+
+    Endpoint::~Endpoint() {
+        if (address != nullptr) {
+            freeaddrinfo(address);
+        }
+    }
 }; // namespace Network

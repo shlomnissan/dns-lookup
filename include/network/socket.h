@@ -14,7 +14,11 @@ namespace Network {
 
         // Delete copy constructor and assignment operator.
         Socket(const Socket&) = delete;
-        Socket& operator=(const Socket&) = delete;
+        auto operator=(const Socket&) -> Socket& = delete;
+
+        // Implements move constructor and move assignment operator.
+        Socket(Socket&& src) noexcept;
+        auto operator=(Socket&& rhs) noexcept -> Socket&;
 
         ~Socket();
 
@@ -22,9 +26,9 @@ namespace Network {
         [[nodiscard]] auto receive() const -> Buffer;
 
     private:
-        int fd_socket {};
-        int address_len;
-        sockaddr* address;
+        int fd_socket = 0;
+        int address_len = 0;
+        sockaddr* address = nullptr;
     };
 
     struct InvalidSocket : public std::exception {

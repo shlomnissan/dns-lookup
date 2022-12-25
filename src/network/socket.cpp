@@ -17,6 +17,24 @@ namespace Network {
         if (fd_socket < 0) { throw InvalidSocket(); }
     }
 
+    Socket::Socket(Socket&& src) noexcept
+        : fd_socket(src.fd_socket),
+          address_len(src.address_len),
+          address(src.address) {
+        src.fd_socket = 0;
+        src.address_len = 0;
+        src.address = nullptr;
+    }
+
+    auto Socket::operator=(Socket&& rhs) noexcept -> Socket& {
+        if (this != &rhs) {
+            std::swap(fd_socket, rhs.fd_socket);
+            std::swap(address_len, rhs.address_len);
+            std::swap(address, rhs.address);
+        }
+        return *this;
+    }
+
     auto Socket::send(const Buffer& buffer) const -> bool {
         auto bytes_sent = sendto(
             fd_socket, buffer.getData(), buffer.getSize(), 0, address, address_len
@@ -34,5 +52,9 @@ namespace Network {
         return output;
     }
 
-    Socket::~Socket() { close(fd_socket); }
+    Socket::~Socket() {
+        if (fd_socket != 0) {
+            close(fd_socket);
+        }
+    }
 } // namespace Network
