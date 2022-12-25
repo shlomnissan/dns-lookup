@@ -1,6 +1,6 @@
 # 🌍 dns-lookup
 
-This repository contains a simple CLI tool that makes DNS queries. This tool is written in modern C++ and uses BSD sockets directly to send a request to your local DNS server and parse a response. It's built for educational purposes, but I created logical abstractions and provided some unit tests and error handling.
+This repository contains a simple CLI tool that makes DNS queries. This tool is written in modern C++ and uses BSD sockets directly to send a request to your local DNS server and parse a response. It's built for educational purposes, but I created logical abstractions and included some unit tests and error handling.
 
 ![dns_lookup_cropped](https://user-images.githubusercontent.com/3165988/209477155-f50f0da4-9352-42a7-a973-e82cc0b90abb.gif)
 
