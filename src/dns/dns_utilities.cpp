@@ -39,7 +39,7 @@ namespace Dns {
         if (type == TYPE_TXT) return "TXT";
         if (type == TYPE_AAAA) return "AAAA";
         if (type == TYPE_ANY) return "ANY";
-        return "UNDEFINED";
+        return "N/A";
     }
 
     auto rcode_to_str(uint8_t rcode) -> string {
@@ -49,7 +49,7 @@ namespace Dns {
         if (rcode == RCODE_NXDOMAIN) return "NXDOMAIN";
         if (rcode == RCODE_NOTIMP) return "NOTIMP";
         if (rcode == RCODE_REFUSED) return "REFUSED";
-        return "UNDEFINED";
+        return "N/A";
     }
 
     auto opcode_to_str(uint8_t opcode) -> string {
@@ -59,6 +59,6 @@ namespace Dns {
         if (opcode == OPCODE_UNASSIGNED) return "UNASSIGNED";
         if (opcode == OPCODE_NOTIFY) return "NOTIFY";
         if (opcode == OPCODE_UPDATE) return "UPDATE";
-        return "UNDEFINED";
+        return "N/A";
     }
 } // namespace Dns

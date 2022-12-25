@@ -56,35 +56,40 @@ namespace Dns {
 
     auto Parser::recordToString(t_resource_record record) const -> string {
         string output;
-        if (record.type == TYPE_A) {
-            // parse A record
-            for (int i = 0; i < 4; ++i) {
-                auto byte = record.data.readBytes<uint8_t>();
-                output += std::to_string(static_cast<int>(byte));
-                if (i != 3) output += ".";
-            }
-        } else if (record.type == TYPE_AAAA) {
-            // parse AAAA record
-            std::stringstream ss {};
-            ss << std::hex;
-            for (int i = 0; i < 8; ++i) {
-                ss << record.data.readBytes<uint16_t>();
-                if (i != 7) ss << ":";
-            }
-            output = ss.str();
-        } else if (record.type == TYPE_MX) {
-            // parse MX record
-            auto preference = record.data.readBytes<uint16_t>();
-            output += std::to_string(static_cast<int>(preference)) + " ";
-            output += Name(buffer, record.data.currData()).getHostname();
-        } else {
-            throw InvalidAnswerType();
-        }
 
-        // TODO: implement NS
-        // TODO: implement CNAME
-        // TODO: implement TXT
-        // TODO: implement ANY
+        switch (record.type) {
+            case TYPE_A: {
+                for (int i = 0; i < 4; ++i) {
+                    auto byte = record.data.readBytes<uint8_t>();
+                    output += std::to_string(static_cast<int>(byte));
+                    if (i != 3) output += ".";
+                }
+            } break;
+            case TYPE_AAAA: {
+                std::stringstream ss {};
+                ss << std::hex;
+                for (int i = 0; i < 8; ++i) {
+                    ss << record.data.readBytes<uint16_t>();
+                    if (i != 7) ss << ":";
+                }
+            } break;
+            case TYPE_MX: {
+                auto preference = record.data.readBytes<uint16_t>();
+                output += std::to_string(static_cast<int>(preference)) + " ";
+                output += Name(buffer, record.data.currData()).getHostname();
+            } break;
+            case TYPE_NS:
+            case TYPE_CNAME:
+            case TYPE_SOA:
+            case TYPE_TXT:
+            case TYPE_ANY: {
+                output += Name(buffer, record.data.currData()).getHostname();
+            } break;
+            default: {
+                auto type_str = std::to_string(record.type);
+                output += "Type " + type_str + " is not supported.\n";
+            } break;
+        }
 
         return output;
     }
