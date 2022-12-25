@@ -58,12 +58,6 @@ namespace Dns {
             return "The DNS message is too short to be valid.";
         }
     };
-
-    struct InvalidAnswerType : public std::exception {
-        const char* what() const throw() override {
-            return "The DNS resource record type is invalid or not supported.";
-        }
-    };
 } // namespace Dns
 
 #endif // DNS_LOOKUP_DNS_PARSER_H

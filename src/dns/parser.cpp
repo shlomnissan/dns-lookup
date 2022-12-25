@@ -72,6 +72,7 @@ namespace Dns {
                     ss << record.data.readBytes<uint16_t>();
                     if (i != 7) ss << ":";
                 }
+                output += ss.str();
             } break;
             case TYPE_MX: {
                 auto preference = record.data.readBytes<uint16_t>();
