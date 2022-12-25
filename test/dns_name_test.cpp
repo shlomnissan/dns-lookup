@@ -25,7 +25,7 @@ const unsigned char dns_response[] {
 
 TEST(dns_name_test, InitNameWithDataNoCompressionLabels) {
     Buffer message {(const char*)dns_request, sizeof(dns_request)};
-    auto p = message.getData() + 12;
+    auto p = message.data() + 12;
 
     Name name {};
     name.initWithData(message, p);
@@ -37,7 +37,7 @@ TEST(dns_name_test, InitNameWithDataNoCompressionLabels) {
 
 TEST(dns_name_test, InitNameWithDataWithCompressionLabels) {
     Buffer message {(const char*)dns_response, sizeof(dns_response)};
-    auto p = message.getData() + 33;
+    auto p = message.data() + 33;
 
     Name name {};
     name.initWithData(message, p);

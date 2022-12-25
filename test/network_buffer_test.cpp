@@ -17,10 +17,10 @@ TEST(network_buffer_test, StoresDataCorrectly) {
     Buffer buffer {};
     buffer.write(data.c_str(), static_cast<int>(data.size()));
 
-    EXPECT_EQ(strcmp(data.c_str(), buffer.getData()), 0);
+    EXPECT_EQ(strcmp(data.c_str(), buffer.data()), 0);
 }
 
-TEST(network_buffer_test, ThrowsExceptionBufferOutOfRange) {
+TEST(network_buffer_test, ThrowsExceptionBufferOutOfRangeOnWrite) {
     auto size {numeric_limits<uint16_t>::max()};
     string data(size, ' ');
 
@@ -29,3 +29,12 @@ TEST(network_buffer_test, ThrowsExceptionBufferOutOfRange) {
 
     EXPECT_THROW({ buffer.write(data.c_str(), 1); }, BufferOutOfRange);
 }
+
+TEST(network_buffer_test, ThrowsExceptionBufferOutOfRangeOnSeek) {
+    string data {"abcde"};
+
+    Buffer buffer { data.c_str(), data.size() };  
+    EXPECT_THROW({ buffer.seek(data.size() + 1); }, BufferOutOfRange);
+}
+
+// TODO: test seek throws

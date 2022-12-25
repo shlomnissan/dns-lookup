@@ -94,8 +94,6 @@ TEST(dns_parser_tests, Parse_MX_RecordCorrectly) {
     EXPECT_EQ(parser.recordToString(parser.getAnswers()[4]), "10 alt4.aspmx.l.google.com");
 }
 
-// TODO: test ID mismatch
-
 TEST(dns_parser_tests, ThrowsIDMismatch) {
     // DNS response payload for www.example.com (A)
     const unsigned char dns_response[] {

@@ -9,4 +9,9 @@ namespace Network {
         std::copy(bytes, bytes + len, buffer.data() + size);
         size += len;
     }
+
+    auto Buffer::seek(int value) -> void {
+        if (pos + value > size) { throw BufferOutOfRange(); }
+        pos += value;
+    }
 } // namespace Network

@@ -16,7 +16,7 @@ const unsigned char dns_request[] = {
 
 TEST(dns_question_test, GeneratesMessageCorrectly) {
     Question question {0xABCD, "www.example.com", "a"};
-    auto data = question.buffer.getData();
+    auto data = question.buffer.data();
 
     for (int i = 0; i < sizeof(dns_request); ++i) {
         EXPECT_EQ(data[i], static_cast<char>(dns_request[i]));

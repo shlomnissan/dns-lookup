@@ -16,7 +16,7 @@ namespace Dns {
         if (isCompressionLabel(p)) {
             compression_label_count++;
             auto addr = getCompressionLabelAddress(p);
-            initWithData(message, message.getData() + addr);
+            initWithData(message, message.data() + addr);
         } else {
             const int len = *p++;
             string label {p, p + len};

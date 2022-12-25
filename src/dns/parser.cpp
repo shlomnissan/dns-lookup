@@ -17,7 +17,7 @@ namespace Dns {
     auto Parser::parseMessage() -> void {
         if (buffer.getSize() < sizeof(t_header)) { throw MessageIsTooShort(); }
 
-        memcpy(&header, buffer.getData(), sizeof(header));
+        memcpy(&header, buffer.data(), sizeof(header));
         header.id = ntohs(header.id);
         header.qdcount = ntohs(header.qdcount);
         header.ancount = ntohs(header.ancount);
@@ -32,22 +32,22 @@ namespace Dns {
         buffer.seek(sizeof(header));
 
         if (header.qdcount) {
-            question.name.initWithData(buffer, buffer.getCurrData());
+            question.name.initWithData(buffer, buffer.currData());
             buffer.seek(question.name.getSize());
-            question.type = buffer.read_bytes<uint16_t>();
-            question.qclass = buffer.read_bytes<uint16_t>();
+            question.type = buffer.readBytes<uint16_t>();
+            question.qclass = buffer.readBytes<uint16_t>();
         }
 
         for (int i = 0; i < answer_count; ++i) {
             t_resource_record record;
-            record.name.initWithData(buffer, buffer.getCurrData());
+            record.name.initWithData(buffer, buffer.currData());
             buffer.seek(record.name.getSize());
 
-            record.type = buffer.read_bytes<uint16_t>();
-            record.qclass = buffer.read_bytes<uint16_t>();
-            record.ttl = buffer.read_bytes<uint32_t>();
-            record.length = buffer.read_bytes<uint16_t>();
-            record.data = {buffer.getCurrData(), record.length};
+            record.type = buffer.readBytes<uint16_t>();
+            record.qclass = buffer.readBytes<uint16_t>();
+            record.ttl = buffer.readBytes<uint32_t>();
+            record.length = buffer.readBytes<uint16_t>();
+            record.data = {buffer.currData(), record.length};
             buffer.seek(record.length);
 
             answer_rrs.emplace_back(record);
@@ -59,7 +59,7 @@ namespace Dns {
         if (record.type == TYPE_A) {
             // parse A record
             for (int i = 0; i < 4; ++i) {
-                auto byte = record.data.read_bytes<uint8_t>();
+                auto byte = record.data.readBytes<uint8_t>();
                 output += std::to_string(static_cast<int>(byte));
                 if (i != 3) output += ".";
             }
@@ -68,15 +68,15 @@ namespace Dns {
             std::stringstream ss {};
             ss << std::hex;
             for (int i = 0; i < 8; ++i) {
-                ss << record.data.read_bytes<uint16_t>();
+                ss << record.data.readBytes<uint16_t>();
                 if (i != 7) ss << ":";
             }
             output = ss.str();
         } else if (record.type == TYPE_MX) {
             // parse MX record
-            auto preference = record.data.read_bytes<uint16_t>();
+            auto preference = record.data.readBytes<uint16_t>();
             output += std::to_string(static_cast<int>(preference)) + " ";
-            output += Name(buffer, record.data.getCurrData()).getHostname();
+            output += Name(buffer, record.data.currData()).getHostname();
         } else {
             throw InvalidAnswerType();
         }
