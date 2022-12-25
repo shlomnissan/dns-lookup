@@ -36,5 +36,3 @@ TEST(network_buffer_test, ThrowsExceptionBufferOutOfRangeOnSeek) {
     Buffer buffer { data.c_str(), data.size() };  
     EXPECT_THROW({ buffer.seek(data.size() + 1); }, BufferOutOfRange);
 }
-
-// TODO: test seek throws

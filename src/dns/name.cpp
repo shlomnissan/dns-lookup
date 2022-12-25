@@ -45,7 +45,9 @@ namespace Dns {
         }
         name += '\0';
         size = static_cast<int>(name.size());
-        hostname = hostname.substr(1);
+        if (!hostname.empty()) {
+            hostname = hostname.substr(1);
+        }
     }
 
     auto Name::isCompressionLabel(const char* p) const -> bool {
