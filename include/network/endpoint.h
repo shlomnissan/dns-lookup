@@ -5,6 +5,7 @@
 #define DNS_LOOKUP_ENDPOINT_H
 
 #include <netdb.h>
+#include <stdexcept>
 #include <string>
 
 namespace Network {
@@ -32,10 +33,11 @@ namespace Network {
         addrinfo* address = nullptr;
     };
 
-    struct InvalidAddress : public std::exception {
-        const char* what() const throw() override {
-            return "Failed to generate an address using getaddrinfo().";
-        }
+    struct InvalidAddress : public std::runtime_error {
+        InvalidAddress() :
+            std::runtime_error(
+                "Failed to generate an address using getaddrinfo()."
+            ) {}
     };
 }; // namespace Network
 

@@ -7,6 +7,7 @@
 #include <array>
 #include <cstdint>
 #include <limits>
+#include <stdexcept>
 
 namespace Network {
     class Buffer {
@@ -50,10 +51,11 @@ namespace Network {
         std::array<char, max_size> buffer;
     };
 
-    struct BufferOutOfRange : public std::exception {
-        const char* what() const throw() override {
-            return "The message buffer is out of range.";
-        }
+    struct BufferOutOfRange : public std::runtime_error {
+        BufferOutOfRange() :
+            std::runtime_error(
+                "The message buffer is out of range."
+            ) {}
     };
 }; // namespace Network
 

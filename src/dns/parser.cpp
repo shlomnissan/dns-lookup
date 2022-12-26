@@ -24,7 +24,7 @@ namespace Dns {
         header.nscount = ntohs(header.nscount);
         header.arcount = ntohs(header.arcount);
 
-        if (header.id != id) { throw IDMismatch(); }
+        if (header.id != id) { throw IDMismatch(id, header.id); }
         if (header.tc) { throw MessageIsTruncated(); }
 
         answer_count = header.ancount + header.nscount + header.arcount;

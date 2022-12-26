@@ -4,6 +4,8 @@
 #ifndef DNS_LOOKUP_SOCKET_H
 #define DNS_LOOKUP_SOCKET_H
 
+#include <stdexcept>
+
 #include "endpoint.h"
 #include "network/buffer.h"
 
@@ -31,10 +33,11 @@ namespace Network {
         sockaddr* address = nullptr;
     };
 
-    struct InvalidSocket : public std::exception {
-        const char* what() const throw() override {
-            return "Failed to open socket using socket().";
-        }
+    struct InvalidSocket : public std::runtime_error {
+        InvalidSocket() :
+            std::runtime_error(
+                "Failed to open socket using socket()."
+            ) {}
     };
 }; // namespace Network
 

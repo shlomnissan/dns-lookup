@@ -7,6 +7,7 @@
 #include <array>
 #include <cstdint>
 #include <limits>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 
@@ -29,10 +30,11 @@ namespace Dns {
         [[nodiscard]] static auto getTypeIDFromString(string_view type) -> uint16_t;
     };
 
-    struct InvalidQuestionType : public std::exception {
-        const char* what() const throw() override {
-            return "The DNS record type you requested is invalid or not supported.";
-        }
+    struct InvalidQuestionType : public std::runtime_error {
+        InvalidQuestionType() :
+            std::runtime_error(
+                "The DNS record type you requested is invalid or not supported."
+            ) {}
     };
 } // namespace Dns
 

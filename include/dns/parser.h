@@ -5,6 +5,8 @@
 #define DNS_LOOKUP_DNS_PARSER_H
 
 #include <cstdint>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -14,6 +16,7 @@
 namespace Dns {
     using Network::Buffer;
     using std::string;
+    using std::stringstream;
 
     class Parser {
     public:
@@ -41,22 +44,29 @@ namespace Dns {
         auto parseMessage() -> void;
     };
 
-    struct IDMismatch : public std::exception {
-        const char* what() const throw() override {
-            return "The DNS repsonse ID doesn't match the request ID.";
+    struct IDMismatch : public std::runtime_error {
+        IDMismatch(uint16_t req_id, uint16_t res_id) : std::runtime_error("") {
+            std::stringstream ss;
+            ss << "The DNS request ID ";
+            ss << "(0x" << std::hex << req_id << ") ";
+            ss << "doesn't match the response ID ";
+            ss << "(0x" << std::hex << res_id << ").";
+            static_cast<std::runtime_error&>(*this) = std::runtime_error(ss.str());
         }
     };
 
-    struct MessageIsTruncated : public std::exception {
-        const char* what() const throw() override {
-            return "The DNS message is truncated. DNS over TCP is not supported.";
-        }
+    struct MessageIsTruncated : public std::runtime_error {
+        MessageIsTruncated() :
+            std::runtime_error(
+                "The DNS message is truncated. DNS over TCP is not supported."
+            ) {}
     };
 
-    struct MessageIsTooShort : public std::exception {
-        const char* what() const throw() override {
-            return "The DNS message is too short to be valid.";
-        }
+    struct MessageIsTooShort : public std::runtime_error {
+        MessageIsTooShort() :
+            std::runtime_error(
+                "The DNS message is too short to be valid."
+            ) {}
     };
 } // namespace Dns
 
