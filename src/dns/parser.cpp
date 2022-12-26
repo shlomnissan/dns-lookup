@@ -6,6 +6,7 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 #include "dns/parser.h"
 
@@ -79,10 +80,13 @@ namespace Dns {
                 output += std::to_string(static_cast<int>(preference)) + " ";
                 output += Name(buffer, record.data.currData()).getHostname();
             } break;
+            case TYPE_TXT: {
+                auto len = record.data.readBytes<uint8_t>();
+                output += {record.data.currData(), record.data.currData() + len}; 
+            } break;
             case TYPE_NS:
             case TYPE_CNAME:
             case TYPE_SOA:
-            case TYPE_TXT:
             case TYPE_ANY: {
                 output += Name(buffer, record.data.currData()).getHostname();
             } break;

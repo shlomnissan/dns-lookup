@@ -6,12 +6,27 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <string>
+#include <sys/types.h>
 
 #include "dns/parser.h"
 #include "dns/types.h"
 #include "network/buffer.h"
 
 using namespace Dns;
+
+auto verify_response(
+    const Parser& parser,
+    uint16_t id,
+    uint16_t type,
+    string_view hostname
+) {
+    EXPECT_EQ(parser.getOpcode(), OPCODE_QUERY);
+    EXPECT_EQ(parser.getRcode(), RCODE_NOERROR);
+    EXPECT_EQ(parser.getId(), id);
+    EXPECT_EQ(parser.getQuestionCount(), 1);
+    EXPECT_EQ(parser.getQuestionType(), type);
+    EXPECT_EQ(parser.getHostname(), hostname);
+}
 
 TEST(dns_parser_tests, Parse_A_RecordCorrectly) {
     // DNS response payload for www.example.com (A)
@@ -24,13 +39,8 @@ TEST(dns_parser_tests, Parse_A_RecordCorrectly) {
 
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
     Parser parser {0xABCD, buffer};
+    verify_response(parser, 0xABCD, TYPE_A, "www.example.com");
 
-    EXPECT_EQ(parser.getOpcode(), OPCODE_QUERY);
-    EXPECT_EQ(parser.getRcode(), RCODE_NOERROR);
-    EXPECT_EQ(parser.getId(), 0xABCD);
-    EXPECT_EQ(parser.getQuestionCount(), 1);
-    EXPECT_EQ(parser.getQuestionType(), TYPE_A);
-    EXPECT_EQ(parser.getHostname(), "www.example.com");
     EXPECT_EQ(parser.getAnswerCount(), 1);
     EXPECT_EQ(parser.recordToString(parser.getAnswers()[0]), "93.184.216.34");
 }
@@ -46,13 +56,8 @@ TEST(dns_parser_tests, Parse_AAAA_RecordCorrectly) {
 
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
     Parser parser {0x2BA8, buffer};
+    verify_response(parser, 0x2BA8, TYPE_AAAA, "example.com");
 
-    EXPECT_EQ(parser.getOpcode(), OPCODE_QUERY);
-    EXPECT_EQ(parser.getRcode(), RCODE_NOERROR);
-    EXPECT_EQ(parser.getId(), 0x2BA8);
-    EXPECT_EQ(parser.getQuestionCount(), 1);
-    EXPECT_EQ(parser.getQuestionType(), TYPE_AAAA);
-    EXPECT_EQ(parser.getHostname(), "example.com");
     EXPECT_EQ(parser.getAnswerCount(), 1);
     EXPECT_EQ(
         parser.recordToString(parser.getAnswers()[0]),
@@ -78,15 +83,9 @@ TEST(dns_parser_tests, Parse_MX_RecordCorrectly) {
 
     Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
     Parser parser {0xB95C, buffer};
+    verify_response(parser, 0xB95C, TYPE_MX, "github.com");
 
-    EXPECT_EQ(parser.getOpcode(), OPCODE_QUERY);
-    EXPECT_EQ(parser.getRcode(), RCODE_NOERROR);
-    EXPECT_EQ(parser.getId(), 0xB95C);
-    EXPECT_EQ(parser.getQuestionCount(), 1);
-    EXPECT_EQ(parser.getQuestionType(), TYPE_MX);
-    EXPECT_EQ(parser.getHostname(), "github.com");
     EXPECT_EQ(parser.getAnswerCount(), 5);
-
     EXPECT_EQ(parser.recordToString(parser.getAnswers()[0]), "1 aspmx.l.google.com");
     EXPECT_EQ(parser.recordToString(parser.getAnswers()[1]), "5 alt1.aspmx.l.google.com");
     EXPECT_EQ(parser.recordToString(parser.getAnswers()[2]), "5 alt2.aspmx.l.google.com");
@@ -94,8 +93,69 @@ TEST(dns_parser_tests, Parse_MX_RecordCorrectly) {
     EXPECT_EQ(parser.recordToString(parser.getAnswers()[4]), "10 alt4.aspmx.l.google.com");
 }
 
+TEST(dns_parser_tests, Parse_NS_RecordCorrectly) {
+    // DNS response payload for example.com (NS)
+    const unsigned char dns_response[] = {
+        0x39, 0x20, 0x81, 0x80, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x07,
+        0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x03, 0x63, 0x6f, 0x6d, 0x00, 0x00,
+        0x02, 0x00, 0x01, 0xc0, 0x0c, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x0d, 0xf3,
+        0x00, 0x14, 0x01, 0x61, 0x0c, 0x69, 0x61, 0x6e, 0x61, 0x2d, 0x73, 0x65, 0x72,
+        0x76, 0x65, 0x72, 0x73, 0x03, 0x6e, 0x65, 0x74, 0x00, 0xc0, 0x0c, 0x00, 0x02,
+        0x00, 0x01, 0x00, 0x00, 0x0d, 0xf3, 0x00, 0x04, 0x01, 0x62, 0xc0, 0x2b,
+    };
+
+    Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
+    Parser parser {0x3920, buffer};
+    verify_response(parser, 0x3920, TYPE_NS, "example.com");
+
+    EXPECT_EQ(parser.getAnswerCount(), 2);
+    EXPECT_EQ(parser.recordToString(parser.getAnswers()[0]), "a.iana-servers.net");
+    EXPECT_EQ(parser.recordToString(parser.getAnswers()[1]), "b.iana-servers.net"); 
+}
+
+TEST(dns_parser_tests, Parse_CNAME_RecordCorrectly) {
+    // DNS response payload for betamark.com (CNAME)
+    const unsigned char dns_response[] = {
+        0x10, 0xf3, 0x81, 0x80, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x08,
+        0x62, 0x65, 0x74, 0x61, 0x6d, 0x61, 0x72, 0x6b, 0x03, 0x63, 0x6f, 0x6d, 0x00,
+        0x00, 0x05, 0x00, 0x01, 0xc0, 0x0c, 0x00, 0x06, 0x00, 0x01, 0x00, 0x00, 0x07,
+        0x08, 0x00, 0x2d, 0x03, 0x6e, 0x73, 0x31, 0x0b, 0x6f, 0x6e, 0x6c, 0x79, 0x64,
+        0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x73, 0xc0, 0x15, 0x04, 0x72, 0x6f, 0x6f, 0x74,
+        0xc0, 0x2e, 0x78, 0x39, 0xee, 0xc9, 0x00, 0x00, 0x70, 0x80, 0x00, 0x00, 0x1c,
+        0x20, 0x00, 0x09, 0x3a, 0x80, 0x00, 0x01, 0x51, 0x80,
+    };
+
+    Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
+    Parser parser {0x10F3, buffer};
+    verify_response(parser, 0x10F3, TYPE_CNAME, "betamark.com");
+
+    EXPECT_EQ(parser.getAnswerCount(), 1);
+    EXPECT_EQ(parser.recordToString(parser.getAnswers()[0]), "ns1.onlydomains.com");
+}
+
+TEST(dns_parser_tests, Parse_TXT_RecordCorrectly) {
+    // DNS response payload for betamark.com (TXT)
+    const unsigned char dns_response[] = {
+        0x70, 0x60, 0x81, 0x80, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x07,
+        0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x03, 0x63, 0x6f, 0x6d, 0x00, 0x00,
+        0x10, 0x00, 0x01, 0xc0, 0x0c, 0x00, 0x10, 0x00, 0x01, 0x00, 0x00, 0x4e, 0xea,
+        0x00, 0x0c, 0x0b, 0x76, 0x3d, 0x73, 0x70, 0x66, 0x31, 0x20, 0x2d, 0x61, 0x6c,
+        0x6c, 0xc0, 0x0c, 0x00, 0x10, 0x00, 0x01, 0x00, 0x00, 0x4e, 0xea, 0x00, 0x21,
+        0x20, 0x77, 0x67, 0x79, 0x66, 0x38, 0x7a, 0x38, 0x63, 0x67, 0x76, 0x6d, 0x32,
+        0x71, 0x6d, 0x78, 0x70, 0x6e, 0x62, 0x6e, 0x6c, 0x64, 0x72, 0x63, 0x6c, 0x74,
+        0x76, 0x6b, 0x34, 0x78, 0x71, 0x66, 0x6e,
+    };
+
+    Buffer buffer {(const char*)dns_response, sizeof(dns_response)};
+    Parser parser {0x7060, buffer};
+    verify_response(parser, 0x7060, TYPE_TXT, "example.com");
+
+    EXPECT_EQ(parser.getAnswerCount(), 2);
+    EXPECT_EQ(parser.recordToString(parser.getAnswers()[0]), "v=spf1 -all");
+    EXPECT_EQ(parser.recordToString(parser.getAnswers()[1]), "wgyf8z8cgvm2qmxpnbnldrcltvk4xqfn");
+}
+
 TEST(dns_parser_tests, ThrowsIDMismatch) {
-    // DNS response payload for www.example.com (A)
     const unsigned char dns_response[] {
         0xab, 0xcd, 0x81, 0x80, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x03,
         0x77, 0x77, 0x77, 0x07, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x03, 0x63,
