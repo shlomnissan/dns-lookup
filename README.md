@@ -28,10 +28,6 @@ dns_lookup -host github.com -type MX
 - `-type` The record type (A, NS, CNAME, MX, TXT, AAAA, and ANY) [optional]
 - `-server` The DNS server address [optional]
 
-## Demo
-
-![dns_lookup_cropped](https://user-images.githubusercontent.com/3165988/209477155-f50f0da4-9352-42a7-a973-e82cc0b90abb.gif)
-
 ## MIT licence
 ```
 Copyright (c) 2023 Shlomi Nissan
