@@ -1,6 +1,6 @@
 # 🌍 dns-lookup
 
-This repository contains a simple CLI tool that makes DNS queries. This tool is written in modern C++ and uses BSD sockets directly to send a request to your local DNS server and parse a response. It's built for educational purposes, but I created logical abstractions and included some unit tests and error handling.
+This repository contains a simple CLI tool that makes DNS queries. This tool is written in modern C++ and uses BSD sockets directly to send a request to your local DNS server and parse a response.
 
 ## Dependencies
 All the dependencies are included in this repository as submodules.
@@ -28,9 +28,16 @@ dns_lookup -host github.com -type MX
 - `-type` The record type (A, NS, CNAME, MX, TXT, AAAA, and ANY) [optional]
 - `-server` The DNS server address [optional]
 
-## MIT licence
+## Licence
 ```
+    ____       __                             __  
+   / __ )___  / /_____ _____ ___  ____ ______/ /__
+  / __  / _ \/ __/ __ `/ __ `__ \/ __ `/ ___/ //_/
+ / /_/ /  __/ /_/ /_/ / / / / / / /_/ / /  / ,<   
+/_____/\___/\__/\__,_/_/ /_/ /_/\__,_/_/  /_/|_|  
+                                                  
 Copyright (c) 2023 Shlomi Nissan
+https://betamark.com
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
